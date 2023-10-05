@@ -160,7 +160,7 @@ export class SymbolHandle {
           gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([...simpleArray, ...position, ...rotationArray]),
-            gl.STATIC_DRAW
+            gl.DYNAMIC_DRAW
           );
           gl.enableVertexAttribArray(0);
           gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 4 * 4, 0);
