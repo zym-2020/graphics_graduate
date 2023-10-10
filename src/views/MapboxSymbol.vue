@@ -26,7 +26,6 @@ export default defineComponent({
         "/symbol/json/tbvs.json",
         "campfire"
       );
-      // await symbolHandle.getPosition("/symbol/json/crossroad_NJ.geojson");
     };
 
     const initMap = () => {

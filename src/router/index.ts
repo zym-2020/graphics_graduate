@@ -12,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "MapboxSymbol",
     component: () => import("@/views/MapboxSymbol.vue"),
   },
+  {
+    path: "/mapboxFlow",
+    name: "MapboxFlow",
+    component: () => import("@/views/MapboxFlow.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -1,0 +1,97 @@
+{
+    "area_masks": [
+        "mask_100.png",
+        "mask_101.png",
+        "mask_102.png",
+        "mask_103.png",
+        "mask_104.png",
+        "mask_105.png",
+        "mask_106.png",
+        "mask_107.png",
+        "mask_108.png",
+        "mask_109.png",
+        "mask_110.png",
+        "mask_111.png",
+        "mask_112.png",
+        "mask_113.png",
+        "mask_114.png",
+        "mask_115.png",
+        "mask_116.png",
+        "mask_117.png",
+        "mask_118.png",
+        "mask_119.png",
+        "mask_120.png",
+        "mask_121.png",
+        "mask_122.png",
+        "mask_123.png",
+        "mask_124.png",
+        "mask_125.png",
+        "mask_126.png"
+    ],
+    "constraints": {
+        "max_drop_rate": 0.1,
+        "max_drop_rate_bump": 0.2,
+        "max_segment_num": 16,
+        "max_streamline_num": 1048576,
+        "max_texture_size": 4096
+    },
+    "extent": [
+        0.8334519409367115,
+        0.4087464036632672,
+        0.8388303296774701,
+        0.40586521884815613
+    ],
+    "flow_boundary": {
+        "u_max": 2.3461,
+        "u_min": -2.1176,
+        "v_max": 2.0175,
+        "v_min": -1.8959
+    },
+    "flow_fields": [
+        "uv_100.png",
+        "uv_101.png",
+        "uv_102.png",
+        "uv_103.png",
+        "uv_104.png",
+        "uv_105.png",
+        "uv_106.png",
+        "uv_107.png",
+        "uv_108.png",
+        "uv_109.png",
+        "uv_110.png",
+        "uv_111.png",
+        "uv_112.png",
+        "uv_113.png",
+        "uv_114.png",
+        "uv_115.png",
+        "uv_116.png",
+        "uv_117.png",
+        "uv_118.png",
+        "uv_119.png",
+        "uv_120.png",
+        "uv_121.png",
+        "uv_122.png",
+        "uv_123.png",
+        "uv_124.png",
+        "uv_125.png",
+        "uv_126.png"
+    ],
+    "projection": {
+        "2D": "projection.png",
+        "3D": "projection_3D.png"
+    },
+    "texture_size": {
+        "area_mask": [
+            1024,
+            558
+        ],
+        "flow_field": [
+            1024,
+            558
+        ],
+        "projection": [
+            1024,
+            2048
+        ]
+    }
+}
