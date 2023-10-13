@@ -4,18 +4,45 @@ import HomeView from "../views/HomeView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "home",
+        component: () => import("@/views/HomeView.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
   },
   {
     path: "/mapboxSymbol",
-    name: "MapboxSymbol",
-    component: () => import("@/views/MapboxSymbol.vue"),
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "MapboxSymbol",
+        component: () => import("@/views/MapboxSymbol.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
   },
   {
     path: "/mapboxFlow",
-    name: "MapboxFlow",
-    component: () => import("@/views/MapboxFlow.vue"),
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "MapboxFlow",
+        component: () => import("@/views/MapboxFlow.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
   },
 ];
 

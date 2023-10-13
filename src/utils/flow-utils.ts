@@ -3,8 +3,6 @@ import axios from "axios";
 import { FlowDescriptionType, FlowEnum } from "@/type";
 import { rand } from "@/utils/common";
 
-let count = 0;
-
 export class FlowHandle {
   private flowDescription: FlowDescriptionType | null = null;
   private shaderScriptMap = new Map();
@@ -131,7 +129,7 @@ export class FlowHandle {
     this.simulationVAO = gl.createVertexArray();
     gl.bindVertexArray(this.simulationVAO);
     const particleMapBuffer = new Float32Array(maxBlockSize * maxBlockSize * 3).fill(0);
-    for (let i = 0; i < this.flowDescription!.constraints.maxTrajectoryNum; i++) {
+    for (let i = 0; i < maxBlockSize * maxBlockSize; i++) {
       particleMapBuffer[i * 3 + 0] = rand(0, 1.0);
       particleMapBuffer[i * 3 + 1] = rand(0, 1.0);
       particleMapBuffer[i * 3 + 2] = 0.0;
@@ -347,10 +345,10 @@ export class FlowHandle {
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.xfBO);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.FLOW_FIELD_TEXTURE + 0));
-    gl.bindSampler(0, this.samplerMap.get("nSampler"));
+    gl.bindSampler(0, this.samplerMap.get("lSampler"));
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.FLOW_FIELD_TEXTURE + 1));
-    gl.bindSampler(1, this.samplerMap.get("nSampler"));
+    gl.bindSampler(1, this.samplerMap.get("lSampler"));
     gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.SEEDING_TEXTURE + 0));
     gl.bindSampler(2, this.samplerMap.get("nSampler"));
@@ -364,7 +362,8 @@ export class FlowHandle {
     this.updateProgram?.setUniformBlock(gl, "FlowFieldUniforms", 0);
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
-    gl.drawArrays(gl.POINTS, 0, this.flowDescription!.constraints.maxTrajectoryNum);
+    // gl.drawArrays(gl.POINTS, 0, this.flowDescription!.constraints.maxTrajectoryNum);
+    gl.drawArrays(gl.POINTS, 0, 10000);
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
@@ -417,7 +416,8 @@ export class FlowHandle {
     this.trajectoryProgram?.setFloat2(gl, "viewport", gl.canvas.width, gl.canvas.height);
     this.trajectoryProgram?.setMat4(gl, "u_matrix", matrix);
     this.trajectoryProgram?.setUniformBlock(gl, "FlowFieldUniforms", 0);
-    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (8 - 1) * 2, this.flowDescription!.constraints.maxTrajectoryNum);
+    // gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (8 - 1) * 2, this.flowDescription!.constraints.maxTrajectoryNum);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (8 - 1) * 2, 10000);
 
     gl.disable(gl.BLEND);
 
