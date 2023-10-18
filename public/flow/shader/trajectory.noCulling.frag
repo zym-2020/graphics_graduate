@@ -103,6 +103,7 @@ void main()
     // vec3 color = mix(colorFromInt(rampColors[int(sls.velocity * 7.0)]), colorFromInt(rampColors[int(sls.velocity * 7.0 + 0.5)]), fract(sls.velocity * 7.0));
     vec3 color = velocityColor(sls.velocity);
     // color = mix(vec3(0.7), color, alpha);
-    fragColor = vec4(color, 1.0) * alpha * sls.alphaDegree;
+    fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    // fragColor = vec4(color, 1.0) * alpha * sls.alphaDegree;
     // fragColor = vec4(1.0) * alpha;
 }

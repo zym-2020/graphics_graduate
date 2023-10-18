@@ -84,7 +84,7 @@ void main()
     vec4 cv_pos_CS = get_clip_position(c_uv);
     vec4 nv_pos_CS = get_clip_position(n_uv);
     vec2 cv_pos_SS = cv_pos_CS.xy / cv_pos_CS.w;
-    vec2 nv_pos_SS = nv_pos_CS.xy / nv_pos_CS.w;;
+    vec2 nv_pos_SS = nv_pos_CS.xy / nv_pos_CS.w;
 
     // calculate the screen offset
     float speedRate = texelFetch(particlePool, c_uv, 0).b;
@@ -94,7 +94,9 @@ void main()
 
     // translate current vertex position
     vec3 view = vec3(0.0, 0.0, 1.0);
-    vec2 v_offset = normalize(cross(view, vec3(cn_vector, 0.0))).xy * mix(1.0, -1.0, parity);
+    vec2 v_offset = normalize(cross(view, vec3(cn_vector, 0.0))).xy * mix(1.0, -1.0, parity);  //等价于以下
+    // vec2 v_offset = normalize(vec2(-cn_vector.y, cn_vector.x)).xy * mix(1.0, -1.0, parity);
+    
     vec2 vertexPos_SS = cv_pos_SS + v_offset * screenOffset / viewport;
 
     //////////////

@@ -114,7 +114,7 @@ export class FlowHandle {
     this.pointProgram.setShader(gl, this.shaderScriptMap.get(FlowEnum.POINT_VERTEX), this.shaderScriptMap.get(FlowEnum.POINT_FRAGMENT));
     this.poolProgram.setShader(gl, this.shaderScriptMap.get(FlowEnum.POOL_VERTEX), this.shaderScriptMap.get(FlowEnum.POOL_FRAGMENT));
 
-    const maxBlockSize = Math.ceil(Math.sqrt(this.flowDescription!.constraints.maxTrajectoryNum));
+    const maxBlockSize = Math.ceil(Math.sqrt(this.flowDescription!.constraints.maxTrajectoryNum));    //1024
 
     this.uboMapBuffer[8] = this.flowDescription!.flowBoundary.uMin;
     this.uboMapBuffer[9] = this.flowDescription!.flowBoundary.vMin;
@@ -190,7 +190,7 @@ export class FlowHandle {
     gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
 
-    // 设置XFBO buffer
+    // 设置XFBO2 buffer
     this.XFBO2 = gl.createTransformFeedback();
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.XFBO2);
     gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, this.simulationBuffer);
@@ -269,21 +269,21 @@ export class FlowHandle {
     particleMapBuffer.fill(0);
     const poolTexture = this.createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RGB32F, this.flowDescription!.constraints.maxTextureSize, this.flowDescription!.constraints.maxTextureSize);
 
-    for (let i = 0; i < this.flowDescription!.constraints.maxSegmentNum; i++) {
-      updateTexture(
-        gl,
-        particleMapBuffer,
-        0,
-        maxBlockSize,
-        maxBlockSize,
-        gl.TEXTURE_2D,
-        poolTexture!,
-        this.textureOffsetArray[i].offsetX,
-        this.textureOffsetArray[i].offsetY,
-        WebGL2RenderingContext.RGB,
-        WebGL2RenderingContext.FLOAT
-      );
-    }
+    // for (let i = 0; i < this.flowDescription!.constraints.maxSegmentNum; i++) {
+    //   updateTexture(
+    //     gl,
+    //     particleMapBuffer,
+    //     0,
+    //     maxBlockSize,
+    //     maxBlockSize,
+    //     gl.TEXTURE_2D,
+    //     poolTexture!,
+    //     this.textureOffsetArray[i].offsetX,
+    //     this.textureOffsetArray[i].offsetY,
+    //     WebGL2RenderingContext.RGB,
+    //     WebGL2RenderingContext.FLOAT
+    //   );
+    // }
     this.textureMap.set(FlowEnum.POOL_TEXTURE, poolTexture);
   }
 
@@ -339,6 +339,7 @@ export class FlowHandle {
 
   tickRender(gl: WebGL2RenderingContext, matrix: number[]) {
     const maxBlockSize = Math.ceil(Math.sqrt(this.flowDescription!.constraints.maxTrajectoryNum));
+
     this.bindUBO(gl, 0);
     // Pass 1: Simulation
     gl.bindVertexArray(this.sVAO);
