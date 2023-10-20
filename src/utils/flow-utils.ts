@@ -418,7 +418,7 @@ export class FlowHandle {
     this.trajectoryProgram?.setMat4(gl, "u_matrix", matrix);
     this.trajectoryProgram?.setUniformBlock(gl, "FlowFieldUniforms", 0);
     // gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (8 - 1) * 2, this.flowDescription!.constraints.maxTrajectoryNum);
-    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (8 - 1) * 2, 10000);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (16 - 1) * 2, 10000);
 
     gl.disable(gl.BLEND);
 

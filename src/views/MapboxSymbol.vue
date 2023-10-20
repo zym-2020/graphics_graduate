@@ -15,17 +15,10 @@ export default defineComponent({
 
     const initResource = async () => {
       await symbolHandle.getShader("/symbol/shader/symbol.vert.glsl", "vertex");
-      await symbolHandle.getShader(
-        "/symbol/shader/symbol.frag.glsl",
-        "fragment"
-      );
+      await symbolHandle.getShader("/symbol/shader/symbol.frag.glsl", "fragment");
       await symbolHandle.getTexture("/symbol/texture/strip.png", "strip");
       await symbolHandle.getTexture("/symbol/texture/palette.png", "palette");
-      await symbolHandle.getData(
-        "/symbol/json/crossroad_NJ.geojson",
-        "/symbol/json/tbvs.json",
-        "campfire"
-      );
+      await symbolHandle.getData("/symbol/json/crossroad_NJ.geojson", "/symbol/json/tbvs.json", "campfire");
     };
 
     const initMap = () => {
@@ -36,8 +29,7 @@ export default defineComponent({
         zoom: 8.8,
         useWebGL2: true,
         antialias: true,
-        accessToken:
-          "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
+        accessToken: "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
       };
       map = new mapBoxGl.Map(mapOpt);
       map.on("load", () => {
@@ -54,7 +46,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style lang="scss" scoped>
 .map {

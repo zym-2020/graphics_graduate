@@ -44,6 +44,20 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: "/cesiumSymbol",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "CesiumSymbol",
+        component: () => import("@/views/CesiumSymbol.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

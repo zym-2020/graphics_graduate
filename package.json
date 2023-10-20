@@ -7,10 +7,13 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@types/cesium": "^1.70.0",
     "@types/gl-matrix": "^3.2.0",
     "@types/mapbox-gl": "^2.7.15",
     "@types/ol": "^7.0.0",
     "axios": "^1.5.1",
+    "cesium": "^1.110.0",
+    "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.14",
     "gl-matrix": "^3.4.3",
