@@ -22,11 +22,7 @@ export class SymbolHandle {
     this.number = number;
     this.symbolPixel = symbolPixel;
     mat4.identity(this.modelMatrix);
-    mat4.scale(this.modelMatrix, this.modelMatrix, [
-      symbolPixel * window.devicePixelRatio,
-      symbolPixel * window.devicePixelRatio,
-      1.0,
-    ]);
+    mat4.scale(this.modelMatrix, this.modelMatrix, [symbolPixel * window.devicePixelRatio, symbolPixel * window.devicePixelRatio, 1.0]);
   }
 
   async getShader(address: string, type: "vertex" | "fragment") {
@@ -47,11 +43,7 @@ export class SymbolHandle {
     });
   }
 
-  async getData(
-    positionJsonAddress: string,
-    infoJsonAddress: string,
-    type: string
-  ) {
+  async getData(positionJsonAddress: string, infoJsonAddress: string, type: string) {
     const positionPromise = new Promise((resolve, reject) => {
       axios.get(positionJsonAddress).then((res) => resolve(res.data));
     });
@@ -73,12 +65,7 @@ export class SymbolHandle {
               this.simpleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
               const positionX = encodeFloatToDouble(coord.x);
               const positionY = encodeFloatToDouble(coord.y);
-              this.position.push(
-                positionX[0],
-                positionY[0],
-                positionX[1],
-                positionY[1]
-              );
+              this.position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
               this.rotationArray.push(0);
             }
           }
@@ -89,31 +76,16 @@ export class SymbolHandle {
 
   myBindTexture(gl: WebGL2RenderingContext) {
     if (this.strip && this.palette) {
-      console.log(123);
       this.simpleTexture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.simpleTexture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        this.strip
-      );
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.strip);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       this.paletteTexture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, this.paletteTexture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        this.palette
-      );
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.palette);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -135,13 +107,7 @@ export class SymbolHandle {
       id: id,
       type: "custom",
       onAdd(map: mapboxgl.Map, gl: WebGL2RenderingContext) {
-        if (
-          vertexScript &&
-          fragmentScript &&
-          position &&
-          simpleArray &&
-          rotationArray
-        ) {
+        if (vertexScript && fragmentScript && position && simpleArray && rotationArray) {
           const vertexShader = gl.createShader(gl.VERTEX_SHADER)!;
           gl.shaderSource(vertexShader, vertexScript);
           gl.compileShader(vertexShader);
@@ -157,33 +123,15 @@ export class SymbolHandle {
           gl.bindVertexArray(VAO);
           const VBO = gl.createBuffer();
           gl.bindBuffer(gl.ARRAY_BUFFER, VBO);
-          gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array([...simpleArray, ...position, ...rotationArray]),
-            gl.DYNAMIC_DRAW
-          );
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([...simpleArray, ...position, ...rotationArray]), gl.DYNAMIC_DRAW);
           gl.enableVertexAttribArray(0);
           gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 4 * 4, 0);
           gl.vertexAttribDivisor(0, 1);
           gl.enableVertexAttribArray(1);
-          gl.vertexAttribPointer(
-            1,
-            4,
-            gl.FLOAT,
-            false,
-            4 * 4,
-            4 * 4 * rotationArray.length
-          );
+          gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 4 * 4, 4 * 4 * rotationArray.length);
           gl.vertexAttribDivisor(1, 1);
           gl.enableVertexAttribArray(2);
-          gl.vertexAttribPointer(
-            2,
-            1,
-            gl.FLOAT,
-            false,
-            4,
-            8 * 4 * rotationArray.length
-          );
+          gl.vertexAttribPointer(2, 1, gl.FLOAT, false, 4, 8 * 4 * rotationArray.length);
           gl.vertexAttribDivisor(2, 1);
           gl.bindBuffer(gl.ARRAY_BUFFER, null);
           gl.bindVertexArray(null);
@@ -204,24 +152,10 @@ export class SymbolHandle {
         });
         const mercatorCenterX = encodeFloatToDouble(mercatorCenter.x);
         const mercatorCenterY = encodeFloatToDouble(mercatorCenter.y);
-        const uMercatorCenterHigh = gl.getUniformLocation(
-          program,
-          "u_mercatorCenterHigh"
-        );
-        gl.uniform2f(
-          uMercatorCenterHigh,
-          mercatorCenterX[0],
-          mercatorCenterY[0]
-        );
-        const uMercatorCenterLow = gl.getUniformLocation(
-          program,
-          "u_mercatorCenterLow"
-        );
-        gl.uniform2f(
-          uMercatorCenterLow,
-          mercatorCenterX[1],
-          mercatorCenterY[1]
-        );
+        const uMercatorCenterHigh = gl.getUniformLocation(program, "u_mercatorCenterHigh");
+        gl.uniform2f(uMercatorCenterHigh, mercatorCenterX[0], mercatorCenterY[0]);
+        const uMercatorCenterLow = gl.getUniformLocation(program, "u_mercatorCenterLow");
+        gl.uniform2f(uMercatorCenterLow, mercatorCenterX[1], mercatorCenterY[1]);
         const uMatrix = gl.getUniformLocation(program, "u_matrix");
         const relativeToEyeMatrix = matrix.slice();
         relativeToEyeMatrix[12] += relativeToEyeMatrix[0] * mercatorCenter.x + relativeToEyeMatrix[4] * mercatorCenter.y;
@@ -231,14 +165,8 @@ export class SymbolHandle {
         gl.uniformMatrix4fv(uMatrix, false, relativeToEyeMatrix);
 
         gl.bindVertexArray(VAO);
-        const symbolTextureLoc = gl.getUniformLocation(
-          program,
-          "symbolTexture"
-        );
-        const paletteTextureLoc = gl.getUniformLocation(
-          program,
-          "paletteTexture"
-        );
+        const symbolTextureLoc = gl.getUniformLocation(program, "symbolTexture");
+        const paletteTextureLoc = gl.getUniformLocation(program, "paletteTexture");
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, that.simpleTexture);
         gl.uniform1i(symbolTextureLoc, 0);
@@ -246,12 +174,13 @@ export class SymbolHandle {
         gl.bindTexture(gl.TEXTURE_2D, that.paletteTexture);
         gl.uniform1i(paletteTextureLoc, 1);
 
-        gl.drawArraysInstanced(
-          gl.TRIANGLE_STRIP,
-          0,
-          that.number,
-          rotationArray.length
-        );
+        gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, that.number, that.rotationArray.length);
+        // gl.drawArraysInstanced(
+        //   gl.POINTS,
+        //   0,
+        //   1,
+        //   1
+        // );
 
         gl.bindVertexArray(null);
         gl.bindTexture(gl.TEXTURE_2D, null);

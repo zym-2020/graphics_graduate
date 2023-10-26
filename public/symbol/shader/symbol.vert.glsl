@@ -57,13 +57,14 @@ void main() {
     // vec4 geoPos_cs=u_matrix*vec4(geoPosition.xy,0.,1.);
     vec4 geoPos_cs = u_matrix * vec4(translateRelativeToEye(geoPosition.xy, geoPosition.zw), 0.0, 1.0);
     gl_Position=vec4(geoPos_cs.xy+symbolOffset_ss.xy*geoPos_cs.w/u_bufferSize,geoPos_cs.zw);
+
     // gl_Position=u_matrix*vec4(geoPosition,0.,1.);
     // gl_PointSize=10.;
 
     
     
     int colorIndex=((intR&3)<<2)+(intG&3);
-    // v_color=vec4(1.0, 0.0, 0.0, 1.0);
+
     v_color=vec4(texelFetch(paletteTexture,ivec2(colorIndex,int(sampleInfo.w)),0).rgb, 1.0);
     // color=vec4(symbolTextureWidth / 2.0,0.,0.,1.);
 }

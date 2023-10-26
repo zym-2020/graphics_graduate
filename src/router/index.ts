@@ -58,6 +58,20 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: "/cesiumFlow",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "CesiumFlow",
+        component: () => import("@/views/CesiumFlow.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

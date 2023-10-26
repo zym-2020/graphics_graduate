@@ -7,8 +7,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import { Ion, Viewer } from "cesium";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
-import { SymbolCustomPrimitive, initResource } from "@/utils/cesium-primitive";
-import { encodeFloatToDouble } from "@/utils/common";
+import { CesiumSymbol } from "@/utils/cesium-symbol";
 export default defineComponent({
   setup() {
     const container = ref<HTMLElement>();
@@ -16,16 +15,15 @@ export default defineComponent({
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNjRiYjA0OS0wYTNjLTQwODItYjhmOS1kNTA3NTNlMzhiZWIiLCJpZCI6MTcxNjM3LCJpYXQiOjE2OTcxODE0NDN9.NXFWJtgHshH3lJbrl9QmfjGM3-KRRoQpy5827zZJJV0";
 
     const initMap = async () => {
-      const result = await initResource(
-        "campfire",
-        64,
-        "/symbol/json/crossroad_NJ.geojson",
-        "/symbol/json/tbvs.json",
+      const cesiumSymbol = new CesiumSymbol(
         "/symbol/shader/symbol3D.vert.glsl",
         "/symbol/shader/symbol3D.frag.glsl",
         "/symbol/texture/strip.png",
-        "/symbol/texture/palette.png"
+        "/symbol/texture/palette.png",
+        "/symbol/json/tbvs.json",
+        "/symbol/json/crossroad_NJ.geojson"
       );
+      await cesiumSymbol.prepareData("campfire", 64);
 
       const view = new Viewer(container.value!, {
         msaaSamples: 2,
@@ -33,6 +31,7 @@ export default defineComponent({
         maximumRenderTimeChange: Infinity,
         // terrainProvider: Cesium.createWorldTerrain(),
       });
+      // view.scene.globe.show = false;
       view.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(118.81259, 32.048116, 400000),
         orientation: {
@@ -41,33 +40,16 @@ export default defineComponent({
         },
       });
 
-      const center = Cesium.Cartesian3.fromDegrees(118.81259, 32.048116, 0);
-
-      const cartesianX = encodeFloatToDouble(center.x);
-      const cartesianY = encodeFloatToDouble(center.y);
-      const cartesianZ = encodeFloatToDouble(center.z);
-
-      view.scene.primitives.add(
-        new SymbolCustomPrimitive({
-          attributeLocations: {
-            sampleInfo: 1,
-            geoPosition_height: 2,
-            geoPosition_low: 3,
-            rotation: 4,
-          },
-          vertexScript: result[4],
-          fragmentScript: result[5],
-          positionHeight: result[1],
-          positionLow: result[2],
-          simpleArray: result[0],
-          rotationArray: result[3],
-          symbolTextureImage: result[6],
-          paletteTextureImage: result[7],
-          u_bufferSize: [view.canvas.width, view.canvas.height],
-          u_mercatorCenterHigh: [cartesianX[0], cartesianY[0], cartesianZ[0]],
-          u_mercatorCenterLow: [cartesianX[1], cartesianY[1], cartesianZ[1]],
-        })
-      );
+      function _render_three_frame(scene: any, frustum: any, pass: any) {
+        if (pass === "GLOBE") {
+          const gl: WebGL2RenderingContext = scene.context._gl;
+          cesiumSymbol.prepareRenderResource(gl);
+          cesiumSymbol.render(gl, 50, 118.81259, 32.048116, 64, Cesium.Matrix4.toArray(scene.context.uniformState.viewProjection));
+        }
+      }
+      (view.scene as any).render_external_frame_functions = [_render_three_frame]
+      // if (!(view as any)._cesiumWidget.scene.render_external_frame_functions) (view.scene as any).render_external_frame_functions = [];
+      // (view as any)._cesiumWidget.scene.render_external_frame_functions.push(_render_three_frame);
     };
 
     onMounted(() => {
