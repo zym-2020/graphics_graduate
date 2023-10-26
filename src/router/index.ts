@@ -59,6 +59,20 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/cesiumSymbolPrimitive",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "CesiumSymbolPrimitive",
+        component: () => import("@/views/CesiumSymbolPrimitive.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
     path: "/cesiumFlow",
     component: () => import("@/layout/Layout.vue"),
     children: [

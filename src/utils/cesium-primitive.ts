@@ -46,10 +46,9 @@ export class SymbolCustomPrimitive {
 
     const modelMatrix = mat4.create();
     mat4.identity(modelMatrix);
-    mat4.scale(modelMatrix, modelMatrix, [25 * window.devicePixelRatio, 25 * window.devicePixelRatio, 1.0]);
+    mat4.scale(modelMatrix, modelMatrix, [50 * window.devicePixelRatio, 50 * window.devicePixelRatio, 1.0]);
     this.u_symbolMatrix = modelMatrix;
     this.u_bufferSize = option.u_bufferSize;
-    console.log(option.u_bufferSize)
   }
 
   getVertexArray(context: any) {
@@ -166,7 +165,7 @@ export class SymbolCustomPrimitive {
       u_bufferSize: () => {
         return new Cesium.Cartesian2(...this.u_bufferSize);
       },
-      u_mercatorCenterHigh: () => {
+      u_cartesianCenterHigh: () => {
         const center = this.view.camera.position;
 
         const cartesianX = encodeFloatToDouble(center.x);
@@ -174,7 +173,7 @@ export class SymbolCustomPrimitive {
         const cartesianZ = encodeFloatToDouble(center.z);
         return new Cesium.Cartesian3(cartesianX[0], cartesianY[0], cartesianZ[0]);
       },
-      u_mercatorCenterLow: () => {
+      u_cartesianCenterLow: () => {
         const center = this.view.camera.position;
 
         const cartesianX = encodeFloatToDouble(center.x);
@@ -183,10 +182,9 @@ export class SymbolCustomPrimitive {
         return new Cesium.Cartesian3(cartesianX[1], cartesianY[1], cartesianZ[1]);
       },
       color: () => {
-        return new Cesium.Cartesian3(Math.random(), Math.random(), Math.random())
-      }
+        return new Cesium.Cartesian3(Math.random(), Math.random(), Math.random());
+      },
     };
-
   }
 
   createCommand(context: any) {
@@ -217,22 +215,22 @@ export class SymbolCustomPrimitive {
       },
       depthMask: false,
       blending: {
-        enabled: true,
+        enabled: false,
       },
       cull: {
-          enabled: false,
-          face: Cesium.CullFace.BACK
+        enabled: false,
+        face: Cesium.CullFace.BACK,
       },
     });
-    
+
     return new (Cesium as any).DrawCommand({
       owner: this,
       vertexArray: this.getVertexArray(context),
       count: 64,
       instanceCount: this.rotationArray.length,
       // instanceCount: 1,
-      primitiveType: Cesium.PrimitiveType.POINTS,
-      // primitiveType: Cesium.PrimitiveType.TRIANGLE_STRIP,
+      // primitiveType: Cesium.PrimitiveType.POINTS,
+      primitiveType: Cesium.PrimitiveType.TRIANGLE_STRIP,
       uniformMap: this.getUniformMap(context),
       shaderProgram: this.getShaderProgram(context),
       renderState: (Cesium as any).RenderState.fromCache(renderState),
