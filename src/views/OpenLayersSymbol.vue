@@ -4,28 +4,39 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
+import OSM from "ol/source/OSM.js";
 import { Feature, Map, View } from "ol";
-import TileLayer from "ol/layer/Tile.js";
+import WebGLTileLayer from "ol/layer/WebGLTile.js";
 import { defaults as defaultControls } from "ol/control";
-import XYZ from "ol/source/XYZ";
+import { CustomLayer } from "@/utils/ol-symbol";
 export default defineComponent({
   setup() {
     const container = ref<HTMLDivElement>();
     let map: Map;
 
-    const baseLayer = new TileLayer({
-      source: new XYZ({
+    const OSMLayer = new WebGLTileLayer({
+      source: new OSM({
         url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
-        projection: "EPSG:3857",
       }),
     });
 
-    const initMap = () => {
+    const customLayer = new CustomLayer(
+      "/symbol/shader/symbol-ol.vert.glsl",
+      "/symbol/shader/symbol-ol.frag.glsl",
+      "/symbol/texture/strip.png",
+      "/symbol/texture/palette.png",
+      "/symbol/json/tbvs.json",
+      "/symbol/json/crossroad_NJ.geojson"
+    );
+
+    const initMap = async () => {
+      console.log(OSMLayer, customLayer)
+      await customLayer.prepareData("campfire", 64);
       map = new Map({
         target: container.value,
-        layers: [baseLayer],
+        layers: [OSMLayer, customLayer],
         view: new View({
-          center: [120.851, 31.864],
+          center: [118.81259, 32.048116],
           projection: "EPSG:4326",
           zoom: 10,
         }),

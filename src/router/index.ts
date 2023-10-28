@@ -86,6 +86,34 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: "/olSymbol",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "OlSymbol",
+        component: () => import("@/views/OpenLayersSymbol.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
+    path: "/olFlow",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "OlFlow",
+        component: () => import("@/views/OpenlayersFlow.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
