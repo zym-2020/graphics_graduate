@@ -241,10 +241,11 @@ export class SymbolCustomPrimitive {
   update(frameState: any) {
     // if (!this.show) return;
     // if you do not want to show the CustomPrimitive, use return statement to bypass the update
-    if (!Cesium.defined(this.commandToExecute)) {
-      this.commandToExecute = this.createCommand(frameState.context);
-    }
-    frameState.commandList.push(this.commandToExecute);
+    console.log(123)
+    // if (!Cesium.defined(this.commandToExecute)) {
+    //   this.commandToExecute = this.createCommand(frameState.context);
+    // }
+    // frameState.commandList.push(this.commandToExecute);
   }
 
   isDestroyed() {

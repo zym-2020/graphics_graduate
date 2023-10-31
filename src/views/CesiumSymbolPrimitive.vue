@@ -54,7 +54,7 @@ export default defineComponent({
       );
     };
 
-    onMounted(initMap)
+    onMounted(initMap);
     return { container };
   },
 });

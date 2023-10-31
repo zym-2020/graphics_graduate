@@ -38,8 +38,10 @@ export const FlowEnum = {
   FLOW_FIELD_IMAGE: "flow_field_image",
   SEEDING_IMAGE: "seeding_image",
   PROJECTION_2D_IMAGE: "projection_2d_image",
+  PROJECTION_3D_IMAGE: "projection_3d_image",
   FLOW_FIELD_TEXTURE: "flow_field_texture",
   SEEDING_TEXTURE: "seeding_texture",
   PROJECTION_2D_TEXTURE: "projection_2d_texture",
+  PROJECTION_3D_TEXTURE: "projection_3d_texture",
   POOL_TEXTURE: "pool_texture",
 };
