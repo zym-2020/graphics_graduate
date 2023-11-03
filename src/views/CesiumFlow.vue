@@ -21,7 +21,7 @@ export default defineComponent({
         { key: FlowEnum.UPDATE_FRAGMENT, address: "/flow/shader/update.frag" },
         {
           key: FlowEnum.TRAJECTORY_VERTEX,
-          address: "/flow/shader/trajectory.cesium.vert.glsl",
+          address: "/flow/shader/trajectory.noCulling.vert",
         },
         {
           key: FlowEnum.TRAJECTORY_FRAGMENT,

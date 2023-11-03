@@ -7,7 +7,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { defaults as defaultControls } from "ol/control";
 import WebGLTileLayer from "ol/layer/WebGLTile.js";
 import { Map, View } from "ol";
-import XYZ from "ol/source/XYZ";
+import OSM from "ol/source/OSM.js";
 import { CustomLayer } from "@/utils/ol-flow";
 import { FlowEnum } from "@/type";
 export default defineComponent({
@@ -16,9 +16,8 @@ export default defineComponent({
     let map: Map;
 
     const OSMLayer = new WebGLTileLayer({
-      source: new XYZ({
+      source: new OSM({
         url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
-        projection: "EPSG:3857",
       }),
     });
 
@@ -50,9 +49,9 @@ export default defineComponent({
       await customLayer.prepareAsyncData("/flow/json/flow_field_description.json", shaderScriptAddressArr);
       map = new Map({
         target: container.value,
-        layers: [OSMLayer],
+        layers: [OSMLayer, customLayer],
         view: new View({
-          center: [118.81259, 32.048116],
+          center: [121.024075, 31.765318],
           projection: "EPSG:4326",
           zoom: 10,
         }),

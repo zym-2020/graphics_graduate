@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import OSM from "ol/source/OSM.js";
-import { Feature, Map, View } from "ol";
+import { Map, View } from "ol";
 import WebGLTileLayer from "ol/layer/WebGLTile.js";
 import { defaults as defaultControls } from "ol/control";
 import { CustomLayer } from "@/utils/ol-symbol";
@@ -50,6 +50,7 @@ export default defineComponent({
 
     onMounted(() => {
       initMap();
+      
     });
 
     return { container };

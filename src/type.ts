@@ -16,8 +16,9 @@ export type FlowDescriptionType = {
   };
   flowFields: string[];
   projection: {
-    projection2D: string;
-    projection3D: string;
+    projectionMapbox: string;
+    projectionCesium: string;
+    projectionOl: string;
   };
   textureSize: {
     seeding: number[];
@@ -37,11 +38,13 @@ export const FlowEnum = {
   POOL_FRAGMENT: "pool_fragment",
   FLOW_FIELD_IMAGE: "flow_field_image",
   SEEDING_IMAGE: "seeding_image",
-  PROJECTION_2D_IMAGE: "projection_2d_image",
-  PROJECTION_3D_IMAGE: "projection_3d_image",
+  PROJECTION_MAPBOX_IMAGE: "projection_mapbox_image",
+  PROJECTION_CESIUM_IMAGE: "projection_cesium_image",
+  PROJECTION_OL_IMAGE: "projection_ol_image",
   FLOW_FIELD_TEXTURE: "flow_field_texture",
   SEEDING_TEXTURE: "seeding_texture",
-  PROJECTION_2D_TEXTURE: "projection_2d_texture",
-  PROJECTION_3D_TEXTURE: "projection_3d_texture",
+  PROJECTION_MAPBOX_TEXTURE: "projection_mapbox_texture",
+  PROJECTION_CESIUM_TEXTURE: "projection_cesium_texture",
+  PROJECTION_OL_TEXTURE: "projection_ol_texture",
   POOL_TEXTURE: "pool_texture",
 };

@@ -63,8 +63,9 @@ export class CustomLayer extends WebGLTileLayer {
         },
         flowFields: data.flow_fields,
         projection: {
-          projection2D: data.projection["2D"],
-          projection3D: data.projection["3D"],
+          projectionMapbox: data.projection["mapbox"],
+          projectionCesium: data.projection["cesium"],
+          projectionOl: data.projection["ol"]
         },
         textureSize: {
           seeding: data.texture_size.area_mask,
@@ -103,7 +104,7 @@ export class CustomLayer extends WebGLTileLayer {
       promiseArr.push(this.getImage(FlowEnum.FLOW_FIELD_IMAGE + i, "/flow/texture/" + this.flowDescription!.flowFields[i], "flipY"));
       promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + i, "/flow/texture/" + this.flowDescription!.seeding[i], "flipY"));
     }
-    promiseArr.push(this.getImage(FlowEnum.PROJECTION_2D_IMAGE, "/flow/texture/" + this.flowDescription!.projection.projection2D, "flipY"));
+    promiseArr.push(this.getImage(FlowEnum.PROJECTION_OL_IMAGE, "/flow/texture/" + this.flowDescription!.projection.projectionOl, "flipY"));
     await Promise.all(promiseArr);
   }
 
@@ -253,7 +254,7 @@ export class CustomLayer extends WebGLTileLayer {
     const projectionTexture2D = this.createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RG32F, 0, 0);
     fillTexture(
       gl,
-      this.imageMap.get(FlowEnum.PROJECTION_2D_IMAGE),
+      this.imageMap.get(FlowEnum.PROJECTION_OL_IMAGE),
       "Float_Point",
       0,
       this.flowDescription!.textureSize.projection[0],
@@ -265,7 +266,7 @@ export class CustomLayer extends WebGLTileLayer {
       WebGL2RenderingContext.RG,
       WebGL2RenderingContext.FLOAT
     );
-    this.textureMap.set(FlowEnum.PROJECTION_2D_TEXTURE, projectionTexture2D);
+    this.textureMap.set(FlowEnum.PROJECTION_OL_TEXTURE, projectionTexture2D);
 
     const maxBlockColumn = Math.floor(this.flowDescription!.constraints.maxTextureSize / maxBlockSize);
     for (let i = 0; i < this.flowDescription!.constraints.maxSegmentNum; i++) {
@@ -391,7 +392,7 @@ export class CustomLayer extends WebGLTileLayer {
     gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.POOL_TEXTURE));
     gl.bindSampler(0, this.samplerMap.get("nSampler"));
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.PROJECTION_2D_TEXTURE));
+    gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.PROJECTION_OL_TEXTURE));
     gl.bindSampler(1, this.samplerMap.get("lSampler"));
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
@@ -422,6 +423,7 @@ export class CustomLayer extends WebGLTileLayer {
   }
 
   render(frameState: any, target: HTMLCanvasElement) {
+    console.log(2)
     const canvas = this.renderSources(frameState, []);
     if (!this.gl) this.gl = target.getContext("webgl2");
     else {

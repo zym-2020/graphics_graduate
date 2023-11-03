@@ -77,8 +77,9 @@
         "uv_126.png"
     ],
     "projection": {
-        "2D": "projection.png",
-        "3D": "projection_3D.png"
+        "mapbox": "projection.png",
+        "cesium": "projection_3D.png",
+		"ol": "projection_ol.png"
     },
     "texture_size": {
         "area_mask": [

@@ -58,8 +58,9 @@ export class CesiumFlow {
         },
         flowFields: data.flow_fields,
         projection: {
-          projection2D: data.projection["2D"],
-          projection3D: data.projection["3D"],
+          projectionMapbox: data.projection["mapbox"],
+          projectionCesium: data.projection["cesium"],
+          projectionOl: data.projection["ol"],
         },
         textureSize: {
           seeding: data.texture_size.area_mask,
@@ -98,7 +99,7 @@ export class CesiumFlow {
       promiseArr.push(this.getImage(FlowEnum.FLOW_FIELD_IMAGE + i, "/flow/texture/" + this.flowDescription!.flowFields[i], "flipY"));
       promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + i, "/flow/texture/" + this.flowDescription!.seeding[i], "flipY"));
     }
-    promiseArr.push(this.getImage(FlowEnum.PROJECTION_3D_IMAGE, "/flow/texture/" + this.flowDescription!.projection.projection3D, "flipY"));
+    promiseArr.push(this.getImage(FlowEnum.PROJECTION_CESIUM_IMAGE, "/flow/texture/" + this.flowDescription!.projection.projectionCesium, "flipY"));
     await Promise.all(promiseArr);
   }
 
@@ -249,7 +250,7 @@ export class CesiumFlow {
     const projectionTexture3D = this.createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RGB32F, 0, 0);
     fillTexture(
       gl,
-      this.imageMap.get(FlowEnum.PROJECTION_3D_IMAGE),
+      this.imageMap.get(FlowEnum.PROJECTION_CESIUM_IMAGE),
       "Float_Point",
       0,
       this.flowDescription!.textureSize.projection[0],
@@ -261,7 +262,7 @@ export class CesiumFlow {
       WebGL2RenderingContext.RGB,
       WebGL2RenderingContext.FLOAT
     );
-    this.textureMap.set(FlowEnum.PROJECTION_3D_TEXTURE, projectionTexture3D);
+    this.textureMap.set(FlowEnum.PROJECTION_CESIUM_TEXTURE, projectionTexture3D);
 
     const maxBlockColumn = Math.floor(this.flowDescription!.constraints.maxTextureSize / maxBlockSize);
     for (let i = 0; i < this.flowDescription!.constraints.maxSegmentNum; i++) {
@@ -387,7 +388,7 @@ export class CesiumFlow {
     gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.POOL_TEXTURE));
     gl.bindSampler(0, this.samplerMap.get("nSampler"));
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.PROJECTION_3D_TEXTURE));
+    gl.bindTexture(gl.TEXTURE_2D, this.textureMap.get(FlowEnum.PROJECTION_CESIUM_TEXTURE));
     gl.bindSampler(1, this.samplerMap.get("lSampler"));
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
