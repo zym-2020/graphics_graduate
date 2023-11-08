@@ -1,15 +1,6 @@
-/* eslint-disable */
-declare module "*.vue" {
-  import type { DefineComponent } from "vue";
-  const component: DefineComponent<{}, {}, any>;
-  export default component;
-}
-
-declare module "element-plus/dist/locale/zh-cn.mjs";
-declare module "@/utils/flow-utils.js" {
+declare module "flow" {
   export class FlowMapbox {
     constructor(option: {
-      frequency?: number;
       seeding: string[];
       constraints: {
         maxDropRate: number;
@@ -39,12 +30,10 @@ declare module "@/utils/flow-utils.js" {
     });
 
     generateCustomLayer(id: string): Promise<{
-      id: string;
-      type: "custom";
+      id: any;
+      type: string;
       onAdd(map: any, gl: any): void;
       render(gl: any, matrix: any): void;
     }>;
-
-    changeState(index: number): void;
   }
 }

@@ -77,8 +77,8 @@
         "uv_126.png"
     ],
     "projection": {
-        "mapbox": "projection.png",
-        "cesium": "projection_3D.png",
+        "mapbox": "projection_mapbox.png",
+        "cesium": "projection_cesium.png",
 		"ol": "projection_ol.png"
     },
     "texture_size": {

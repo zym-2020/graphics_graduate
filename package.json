@@ -4,21 +4,23 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "@types/cesium": "^1.70.0",
     "@types/gl-matrix": "^3.2.0",
     "@types/mapbox-gl": "^2.7.15",
     "@types/ol": "^7.0.0",
     "@types/three": "^0.158.1",
     "axios": "^1.5.1",
+    "cesium": "^1.111.0",
     "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.8.3",
     "element-plus": "^2.3.14",
     "gl-matrix": "^3.4.3",
     "mapbox-gl": "^2.15.0",
     "ol": "^8.1.0",
+    "patch-package": "^8.0.0",
     "three": "^0.158.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"

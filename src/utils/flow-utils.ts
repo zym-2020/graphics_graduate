@@ -370,7 +370,7 @@ export class FlowHandle {
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
-
+    
     // Pass 2: Update particle pool
 
     gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, this.unPackBuffer);
