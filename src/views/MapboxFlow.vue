@@ -7,14 +7,11 @@
 import { defineComponent, onMounted, ref } from "vue";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapBoxGl, { MapboxOptions } from "mapbox-gl";
-import { FlowEnum } from "@/type";
-import { FlowHandle } from "@/utils/flow-utils";
 import { FlowMapbox } from "@/utils/flow-utils.js";
 export default defineComponent({
   setup() {
     const container = ref<HTMLDivElement>();
     let map: mapBoxGl.Map;
-    const flowHandle = new FlowHandle();
     const flowMapbox = new FlowMapbox({
       seeding: [
         "/flow/texture/mask_100.png",
@@ -114,37 +111,11 @@ export default defineComponent({
       };
       map = new mapBoxGl.Map(mapOpt);
       map.on("load", () => {
-        // const customLayer = flowHandle.generateCustomLayer("flow");
-        // map.addLayer(customLayer);
         map.addLayer(layer);
       });
     };
 
     onMounted(async () => {
-      const shaderScriptAddressArr: { key: string; address: string }[] = [
-        { key: FlowEnum.UPDATE_VERTEX, address: "/flow/shader/update.vert" },
-        { key: FlowEnum.UPDATE_FRAGMENT, address: "/flow/shader/update.frag" },
-        {
-          key: FlowEnum.TRAJECTORY_VERTEX,
-          address: "/flow/shader/trajectory.noCulling.vert",
-        },
-        {
-          key: FlowEnum.TRAJECTORY_FRAGMENT,
-          address: "/flow/shader/trajectory.noCulling.frag",
-        },
-        {
-          key: FlowEnum.POINT_VERTEX,
-          address: "/flow/shader/point.noCulling.vert",
-        },
-        {
-          key: FlowEnum.POINT_FRAGMENT,
-          address: "/flow/shader/point.noCulling.frag",
-        },
-        { key: FlowEnum.POOL_VERTEX, address: "/flow/shader/showPool.vert" },
-        { key: FlowEnum.POOL_FRAGMENT, address: "/flow/shader/showPool.frag" },
-      ];
-
-      // await flowHandle.prepareAsyncData("/flow/json/flow_field_description.json", shaderScriptAddressArr);
       const layer = await flowMapbox.generateCustomLayer("flow");
       initMap(layer);
     });

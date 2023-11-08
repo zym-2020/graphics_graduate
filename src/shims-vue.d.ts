@@ -9,7 +9,6 @@ declare module "element-plus/dist/locale/zh-cn.mjs";
 declare module "@/utils/flow-utils.js" {
   export class FlowMapbox {
     constructor(option: {
-      frequency?: number;
       seeding: string[];
       constraints: {
         maxDropRate: number;
@@ -36,6 +35,9 @@ declare module "@/utils/flow-utils.js" {
         flowField: number[];
         projection: number[];
       };
+
+      frequency?: number;
+      lineNumber?: number;
     });
 
     generateCustomLayer(id: string): Promise<{
@@ -44,6 +46,46 @@ declare module "@/utils/flow-utils.js" {
       onAdd(map: any, gl: any): void;
       render(gl: any, matrix: any): void;
     }>;
+
+    changeState(index: number): void;
+  }
+
+  export class FlowCesium {
+    constructor(option: {
+      seeding: string[];
+      constraints: {
+        maxDropRate: number;
+        maxDropRateBump: number;
+        maxSegmentNum: number;
+        maxTrajectoryNum: number;
+        maxTextureSize: number;
+      };
+      extent: number[];
+      flowBoundary: {
+        uMax: number;
+        uMin: number;
+        vMax: number;
+        vMin: number;
+      };
+      flowFields: string[];
+      projection: {
+        projectionMapbox: string;
+        projectionCesium: string;
+        projectionOl: string;
+      };
+      textureSize: {
+        seeding: number[];
+        flowField: number[];
+        projection: number[];
+      };
+
+      frequency?: number;
+      lineNumber?: number;
+    });
+
+    prepareAsyncImage(): Promise<void>;
+
+    render(gl: WebGL2RenderingContext, matrix: number[]): void;
 
     changeState(index: number): void;
   }
