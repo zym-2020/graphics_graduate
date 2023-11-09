@@ -65,7 +65,7 @@ export class CustomLayer extends WebGLTileLayer {
         projection: {
           projectionMapbox: data.projection["mapbox"],
           projectionCesium: data.projection["cesium"],
-          projectionOl: data.projection["ol"]
+          projectionOl: data.projection["ol"],
         },
         textureSize: {
           seeding: data.texture_size.area_mask,
@@ -430,6 +430,9 @@ export class CustomLayer extends WebGLTileLayer {
       this.tickLogicCount();
       this.tickRender(this.gl, frameState);
     }
+    frameState.postRenderFunctions.push((map: any, frameState: any) => {
+      map.render();
+    });
     return canvas;
   }
 }
