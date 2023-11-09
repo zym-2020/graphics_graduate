@@ -1,0 +1,28 @@
+diff --git a/node_modules/ol/webgl.js b/node_modules/ol/webgl.js
+index c21d9ee..dfe7965 100644
+--- a/node_modules/ol/webgl.js
++++ b/node_modules/ol/webgl.js
+@@ -90,7 +90,8 @@ const CONTEXT_IDS = ['experimental-webgl', 'webgl', 'webkit-3d', 'moz-webgl'];
+  * @param {Object} [attributes] Attributes.
+  * @return {WebGLRenderingContext} WebGL rendering context.
+  */
+-export function getContext(canvas, attributes) {
++// yiming
++export function getContext(canvas, attributes, request_webgl2 = true) {
+   attributes = Object.assign(
+     {
+       preserveDrawingBuffer: true,
+@@ -98,10 +99,11 @@ export function getContext(canvas, attributes) {
+     },
+     attributes
+   );
+-  const ii = CONTEXT_IDS.length;
++  const contextsToTry = request_webgl2 ? ['webgl2', ...CONTEXT_IDS] : CONTEXT_IDS
++  const ii = contextsToTry.length;
+   for (let i = 0; i < ii; ++i) {
+     try {
+-      const context = canvas.getContext(CONTEXT_IDS[i], attributes);
++      const context = canvas.getContext(contextsToTry[i], attributes);
+       if (context) {
+         return /** @type {!WebGLRenderingContext} */ (context);
+       }

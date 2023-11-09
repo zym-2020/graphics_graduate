@@ -423,7 +423,6 @@ export class CustomLayer extends WebGLTileLayer {
   }
 
   render(frameState: any, target: HTMLCanvasElement) {
-    console.log(2)
     const canvas = this.renderSources(frameState, []);
     if (!this.gl) this.gl = target.getContext("webgl2");
     else {
