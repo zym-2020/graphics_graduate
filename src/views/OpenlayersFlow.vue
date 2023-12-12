@@ -16,7 +16,14 @@ export default defineComponent({
 
     const OSMLayer = new WebGLTileLayer({
       source: new OSM({
-        url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        // url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        url: "http://t0.tianditu.com/vec_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
+      }),
+    });
+    const TDTLayer = new WebGLTileLayer({
+      source: new OSM({
+        // url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        url: "http://t0.tianditu.com/cva_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
       }),
     });
     const flowOpenLayers = new FlowOpenLayers({
@@ -108,7 +115,7 @@ export default defineComponent({
       await flowOpenLayers.prepareAsyncImage();
       map = new Map({
         target: container.value,
-        layers: [OSMLayer, flowOpenLayers],
+        layers: [OSMLayer, TDTLayer, flowOpenLayers],
         view: new View({
           center: [121.024075, 31.765318],
           projection: "EPSG:4326",

@@ -60,7 +60,7 @@ void main() {
 
     // gl_Position=u_matrix*vec4(geoPosition,0.,1.);
     // gl_PointSize=10.;
-
+ 
     
     
     int colorIndex=((intR&3)<<2)+(intG&3);

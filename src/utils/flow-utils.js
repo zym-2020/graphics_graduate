@@ -2392,7 +2392,7 @@ export class FlowOpenLayers extends WebGLTileLayer {
     this._uboMapBuffer[3] = 0.003;
     this._uboMapBuffer[4] = 0.001;
     this._uboMapBuffer[5] = 2.0 * 0.01 * 100;
-    this._uboMapBuffer[6] = 0;
+    this._uboMapBuffer[6] = 2;
 
     if (this.count === frequency && this.flag) {
       this.flag = false;
