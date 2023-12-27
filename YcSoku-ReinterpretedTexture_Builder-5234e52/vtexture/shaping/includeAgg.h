@@ -1,0 +1,37 @@
+#ifndef __INCLUDE_AGG_H__
+#define __INCLUDE_AGG_H__
+#include "agg_rendering_buffer.h"
+#include "agg_pixfmt_rgb.h"
+#include "agg_pixfmt_rgba.h"
+#include "agg_renderer_base.h"
+#include "agg_renderer_mclip.h"
+#include "agg_renderer_scanline.h"
+#include "agg_rasterizer_scanline_aa.h"
+#include "agg_scanline_p.h"
+#include "agg_conv_stroke.h"
+#include "agg_font_cache_manager.h"
+#include "agg_span_allocator.h"
+#include "agg_span_gradient.h"
+#include "agg_span_interpolator_linear.h"
+#include "agg_image_accessors.h"
+#include "agg_image_filters.h"
+#include "agg_span_image_filter_rgb.h"
+#include "agg_span_image_filter_rgba.h"
+#include "agg_renderer_outline_aa.h"
+#include "agg_renderer_outline_image.h"
+#include "agg_rasterizer_outline_aa.h"
+#include "agg_pattern_filters_rgba.h"
+#include "agg_conv_transform.h"
+#include "agg_conv_clip_polygon.h"
+#include "agg_conv_clip_polyline.h"
+#include "agg_conv_gpc.h"
+//#include "agg_pattern_filters_rgb.h"
+#include "agg_conv_dash.h"
+#include "agg_path_storage.h"
+#include "agg_ellipse.h"
+
+//#include "agg_font_cache_manager.h"
+//#include "../font_freetype/agg_font_freetype.h"
+
+
+#endif
