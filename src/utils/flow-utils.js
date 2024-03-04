@@ -34,6 +34,45 @@ export class FlowMapbox {
   imagePre = 0;
   imageNext = 1;
 
+  _speedFactor = 0;
+  _tracksNumber = 0;
+  _segmentNumber = 0;
+  _fillWidth = 0;
+  _aaWidth = 0;
+  _color = 0;
+  _primitive = 0;
+  _fixedDropRate = 0;
+  _extraDropRate = 0;
+  eventObj = {
+    speedFactor: (value) => {
+      this._speedFactor = value;
+    },
+    tracksNumber: (value) => {
+      this._tracksNumber = value;
+    },
+    segmentNumber: (value) => {
+      this._segmentNumber = value;
+    },
+    fillWidth: (value) => {
+      this.fillWidth = value;
+    },
+    aaWidth: (value) => {
+      this._aaWidth = value;
+    },
+    color: (value) => {
+      this._color = value;
+    },
+    primitive: (value) => {
+      this._primitive = value;
+    },
+    fixedDropRate: (value) => {
+      this._fixedDropRate = value;
+    },
+    extraDropRate: (value) => {
+      this._extraDropRate = value;
+    },
+  };
+
   constructor(option) {
     this.option = option;
     this._segmentPrepare = option.constraints.maxSegmentNum;
@@ -401,14 +440,16 @@ export class FlowMapbox {
     float getAlpha(float param)
     {
         if (aaWidth == 0.0) return 1.0;
-        float alpha = 1.0 - sin(clamp((param * (0.5 * fillWidth + aaWidth) - 0.5 * fillWidth) / aaWidth, 0.0, 1.0) * 2.0 / 3.141592653);
+        // float alpha = 1.0 - sin(clamp((param * (0.5 * fillWidth + aaWidth) - 0.5 * fillWidth) / aaWidth, 0.0, 1.0) * 2.0 / 3.141592653);
+        float alpha = 1.0 - sin(clamp((param * (0.5 * fillWidth + aaWidth) - 0.5 * fillWidth) / aaWidth, 0.0, 1.0) * 3.141592653 / 2.0);
+        // float alpha = 1.0 - sin(param * 3.141592653 / 2.0);
         return alpha;
     }
 
     void main() 
     {
         if (sls.isDiscarded >= fullLife) discard; 
-        float alpha = getAlpha(abs(sls.edgeParam));
+        float alpha = getAlpha(abs(0.0));
 
         // vec3 color = mix(colorFromInt(rampColors[int(sls.velocity * 7.0)]), colorFromInt(rampColors[int(sls.velocity * 7.0 + 0.5)]), fract(sls.velocity * 7.0));
         vec3 color = velocityColor(sls.velocity);
@@ -419,6 +460,15 @@ export class FlowMapbox {
     }
     `
     );
+    this._segmentNumber = option.parameter.segmentNumber;
+    this._speedFactor = option.parameter.speedFactor;
+    this._tracksNumber = option.parameter.tracksNumber;
+    this._fillWidth = option.parameter.fillWidth;
+    this._aaWidth = option.parameter.aaWidth;
+    this._color = option.parameter.color;
+    this._primitive = option.parameter.primitive;
+    this._fixedDropRate = option.parameter.fixedDropRate;
+    this._extraDropRate = option.parameter.extraDropRate;
   }
   async prepareAsyncImage() {
     const promiseArr = [];
@@ -612,12 +662,12 @@ export class FlowMapbox {
     this.swap();
     const frequency = this.option.frequency ? this.option.frequency : 200;
     this._uboMapBuffer[0] = this.count / frequency;
-    this._uboMapBuffer[1] = this.option.constraints.maxSegmentNum;
+    this._uboMapBuffer[1] = this._segmentNumber;
     this._uboMapBuffer[2] = this.option.constraints.maxSegmentNum * 10;
-    this._uboMapBuffer[3] = 0.003;
-    this._uboMapBuffer[4] = 0.001;
-    this._uboMapBuffer[5] = 2.0 * 0.01 * 100;
-    this._uboMapBuffer[6] = 0;
+    this._uboMapBuffer[3] = this._fixedDropRate;
+    this._uboMapBuffer[4] = this._extraDropRate;
+    this._uboMapBuffer[5] = this._speedFactor * 0.01 * 100;
+    this._uboMapBuffer[6] = this._color;
 
     if (this.count === frequency && this.flag) {
       this.flag = false;
@@ -719,8 +769,7 @@ export class FlowMapbox {
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
 
-    const lineNumber = this.option.lineNumber ? this.option.lineNumber : 10000;
-    gl.drawArrays(gl.POINTS, 0, lineNumber);
+    gl.drawArrays(gl.POINTS, 0, this._tracksNumber);
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
@@ -769,12 +818,12 @@ export class FlowMapbox {
     this._trajectoryProgram.setInt(gl, "beginBlock", this._beginBlock);
     this._trajectoryProgram.setInt(gl, "blockSize", maxBlockSize);
     this._trajectoryProgram.setFloat(gl, "currentSegmentNum", 8.0);
-    this._trajectoryProgram.setFloat(gl, "fillWidth", 1);
-    this._trajectoryProgram.setFloat(gl, "aaWidth", 2);
+    this._trajectoryProgram.setFloat(gl, "fillWidth", this._fillWidth);
+    this._trajectoryProgram.setFloat(gl, "aaWidth", this._aaWidth);
     this._trajectoryProgram.setFloat2(gl, "viewport", gl.canvas.width, gl.canvas.height);
     this._trajectoryProgram.setMat4(gl, "u_matrix", matrix);
     this._trajectoryProgram.setUniformBlock(gl, "FlowFieldUniforms", 0);
-    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (16 - 1) * 2, lineNumber);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (this._segmentNumber - 1) * 2, this._tracksNumber);
 
     gl.disable(gl.BLEND);
 

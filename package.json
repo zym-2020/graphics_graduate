@@ -8,6 +8,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@types/dat.gui": "^0.7.12",
     "@types/gl-matrix": "^3.2.0",
     "@types/mapbox-gl": "^2.7.15",
     "@types/ol": "^7.0.0",
@@ -16,6 +17,7 @@
     "cesium": "^1.111.0",
     "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.8.3",
+    "dat.gui": "^0.7.9",
     "element-plus": "^2.3.14",
     "gl-matrix": "^3.4.3",
     "mapbox-gl": "^2.15.0",

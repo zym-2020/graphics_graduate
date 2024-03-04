@@ -1,4 +1,3 @@
-
 /* eslint-disable */
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
@@ -10,38 +9,11 @@ declare module "element-plus/dist/locale/zh-cn.mjs";
 
 declare module "@/utils/flow-utils.js" {
   import WebGLTileLayer from "ol/layer/WebGLTile.js";
+  import { EventObj, FlowDescriptionType } from "@/type";
   export class FlowMapbox {
-    constructor(option: {
-      seeding: string[];
-      constraints: {
-        maxDropRate: number;
-        maxDropRateBump: number;
-        maxSegmentNum: number;
-        maxTrajectoryNum: number;
-        maxTextureSize: number;
-      };
-      extent: number[];
-      flowBoundary: {
-        uMax: number;
-        uMin: number;
-        vMax: number;
-        vMin: number;
-      };
-      flowFields: string[];
-      projection: {
-        projectionMapbox: string;
-        projectionCesium: string;
-        projectionOl: string;
-      };
-      textureSize: {
-        seeding: number[];
-        flowField: number[];
-        projection: number[];
-      };
-
-      frequency?: number;
-      lineNumber?: number;
-    });
+    eventObj: EventObj;
+    option: FlowDescriptionType;
+    constructor(option: FlowDescriptionType);
 
     generateCustomLayer(id: string): Promise<{
       id: string;

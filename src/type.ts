@@ -1,11 +1,33 @@
 export type FlowDescriptionType = {
   seeding: string[];
   constraints: {
-    maxDropRate: number;
-    maxDropRateBump: number;
-    maxSegmentNum: number;
+    minSpeedFactor: number;
+    minTrajectoryNum: number;
+    minSegmentNum: number;
+    minFillWidth: number;
+    minAAWidth: number;
+    minFixedDropRate: number;
+    minExtraDropRate: number;
+    maxSpeedFactor: number;
     maxTrajectoryNum: number;
+    maxSegmentNum: number;
+    maxFillWidth: number;
+    maxAAWidth: number;
+    maxFixedDropRate: number;
+    maxExtraDropRate: number;
+
     maxTextureSize: number;
+  };
+  parameter: {
+    speedFactor: number;
+    tracksNumber: number;
+    segmentNumber: number;
+    fillWidth: number;
+    aaWidth: number;
+    color: number;
+    primitive: number;
+    fixedDropRate: number;
+    extraDropRate: number;
   };
   extent: number[];
   flowBoundary: {
@@ -25,6 +47,9 @@ export type FlowDescriptionType = {
     flowField: number[];
     projection: number[];
   };
+
+  frequency?: number;
+  lineNumber?: number;
 };
 
 export const FlowEnum = {
@@ -47,4 +72,16 @@ export const FlowEnum = {
   PROJECTION_CESIUM_TEXTURE: "projection_cesium_texture",
   PROJECTION_OL_TEXTURE: "projection_ol_texture",
   POOL_TEXTURE: "pool_texture",
+};
+
+export type EventObj = {
+  speedFactor: () => {};
+  tracksNumber: () => {};
+  segmentNumber: () => {};
+  fillWidth: () => {};
+  aaWidth: () => {};
+  color: () => {};
+  primitive: () => {};
+  fixedDropRate: () => {};
+  extraDropRate: () => {};
 };

@@ -45,6 +45,34 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/mapboxSymbolInstance",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "MapboxSymbolInstance",
+        component: () => import("@/views/MapboxSymbolInstance.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
+    path: "/mapboxFlowInstance",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "MapboxFlowInstance",
+        component: () => import("@/views/MapboxFlowInstance.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
     path: "/cesiumSymbol",
     component: () => import("@/layout/Layout.vue"),
     children: [

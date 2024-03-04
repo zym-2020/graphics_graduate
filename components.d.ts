@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ControlPanel: typeof import('./src/components/ControlPanel.vue')['default']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElRow: typeof import('element-plus/es')['ElRow']
