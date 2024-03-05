@@ -37,11 +37,7 @@ export type FlowDescriptionType = {
     vMin: number;
   };
   flowFields: string[];
-  projection: {
-    projectionMapbox: string;
-    projectionCesium: string;
-    projectionOl: string;
-  };
+  projection: string
   textureSize: {
     seeding: number[];
     flowField: number[];
@@ -49,7 +45,6 @@ export type FlowDescriptionType = {
   };
 
   frequency?: number;
-  lineNumber?: number;
 };
 
 export const FlowEnum = {

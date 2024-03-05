@@ -1,20 +1,27 @@
 <template>
-  <div class="map" ref="container"></div>
+  <div class="container" ref="container"></div>
+  <control-panel :eventObj="flowCesium.eventObj" :option="flowCesium.option"></control-panel>
+  <process-component :flowInstance="flowCesium"></process-component>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import ProcessComponent from "@/components/ProcessComponent.vue";
+import ControlPanel from "@/components/ControlPanel.vue";
+import { FlowCesium } from "@/utils/flow-utils.js";
 import { Ion, Viewer } from "cesium";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
-import { FlowEnum } from "@/type";
-import { FlowCesium } from "@/utils/flow-utils.js";
 export default defineComponent({
+  components: {
+    ControlPanel,
+    ProcessComponent,
+  },
   setup() {
     const container = ref<HTMLElement>();
     Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNjRiYjA0OS0wYTNjLTQwODItYjhmOS1kNTA3NTNlMzhiZWIiLCJpZCI6MTcxNjM3LCJpYXQiOjE2OTcxODE0NDN9.NXFWJtgHshH3lJbrl9QmfjGM3-KRRoQpy5827zZJJV0";
-    const flowCesium = new FlowCesium({
+    const flowCesium = ref<FlowCesium>(new FlowCesium({
       seeding: [
         "/flow/texture/mask_100.png",
         "/flow/texture/mask_101.png",
@@ -45,11 +52,33 @@ export default defineComponent({
         "/flow/texture/mask_126.png",
       ],
       constraints: {
-        maxDropRate: 0.1,
-        maxDropRateBump: 0.2,
-        maxSegmentNum: 16,
+        minSpeedFactor: 0.5,
+        minTrajectoryNum: 4096,
+        minSegmentNum: 3,
+        minFillWidth: 1,
+        minAAWidth: 1,
+        minFixedDropRate: 0.001,
+        minExtraDropRate: 0.001,
+        maxSpeedFactor: 10,
         maxTrajectoryNum: 262144,
+        maxSegmentNum: 16,
+        maxFillWidth: 25,
+        maxAAWidth: 5,
+        maxFixedDropRate: 0.1,
+        maxExtraDropRate: 0.2,
+
         maxTextureSize: 4096,
+      },
+      parameter: {
+        speedFactor: 2,
+        tracksNumber: 16384,
+        segmentNumber: 16,
+        fillWidth: 1,
+        aaWidth: 2,
+        color: 0,
+        primitive: 0,
+        fixedDropRate: 0.003,
+        extraDropRate: 0.002,
       },
       extent: [0.8334519409367115, 0.4087464036632672, 0.8388303296774701, 0.40586521884815613],
       flowBoundary: {
@@ -87,20 +116,15 @@ export default defineComponent({
         "/flow/texture/uv_125.png",
         "/flow/texture/uv_126.png",
       ],
-      projection: {
-        projectionMapbox: "/flow/texture/projection_mapbox.png",
-        projectionCesium: "/flow/texture/projection_cesium.png",
-        projectionOl: "/flow/texture/projection_ol.png",
-      },
+      projection: "/flow/texture/projection_cesium.png",
       textureSize: {
         seeding: [1024, 558],
         flowField: [1024, 558],
         projection: [1024, 2048],
       },
-    });
+    }))
     const initMap = async () => {
-
-      await flowCesium.prepareAsyncImage()
+      await flowCesium.value.prepareAsyncImage();
       const view = new Viewer(container.value!, {
         msaaSamples: 2,
         // requestRenderMode: true,
@@ -116,20 +140,29 @@ export default defineComponent({
       function _render_three_frame(scene: any, frustum: any, pass: any) {
         if (pass === "GLOBE") {
           const gl: WebGL2RenderingContext = scene.context._gl;
-          flowCesium.render(gl, Cesium.Matrix4.toArray(scene.context.uniformState.viewProjection));
+          flowCesium.value.render(gl, Cesium.Matrix4.toArray(scene.context.uniformState.viewProjection));
         }
       }
       (view.scene as any).render_external_frame_functions = [_render_three_frame];
     };
+
     onMounted(initMap);
 
-    return { container };
+    return { container, flowCesium };
   },
 });
 </script>
 
-<style>
-.map {
+<style scoped lang="scss">
+.container {
   height: 100%;
+}
+.control-panel {
+  top: calc(5.1rem + 24px);
+  left: 0.5rem;
+}
+.process-component {
+  top: 5.1rem;
+  left: 0.5rem;
 }
 </style>

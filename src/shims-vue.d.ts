@@ -11,6 +11,9 @@ declare module "@/utils/flow-utils.js" {
   import WebGLTileLayer from "ol/layer/WebGLTile.js";
   import { EventObj, FlowDescriptionType } from "@/type";
   export class FlowMapbox {
+    imagePre: number;
+    count: number;
+    frequency: number;
     eventObj: EventObj;
     option: FlowDescriptionType;
     constructor(option: FlowDescriptionType);
@@ -26,37 +29,12 @@ declare module "@/utils/flow-utils.js" {
   }
 
   export class FlowCesium {
-    constructor(option: {
-      seeding: string[];
-      constraints: {
-        maxDropRate: number;
-        maxDropRateBump: number;
-        maxSegmentNum: number;
-        maxTrajectoryNum: number;
-        maxTextureSize: number;
-      };
-      extent: number[];
-      flowBoundary: {
-        uMax: number;
-        uMin: number;
-        vMax: number;
-        vMin: number;
-      };
-      flowFields: string[];
-      projection: {
-        projectionMapbox: string;
-        projectionCesium: string;
-        projectionOl: string;
-      };
-      textureSize: {
-        seeding: number[];
-        flowField: number[];
-        projection: number[];
-      };
-
-      frequency?: number;
-      lineNumber?: number;
-    });
+    imagePre: number;
+    count: number;
+    frequency: number;
+    eventObj: EventObj;
+    option: FlowDescriptionType;
+    constructor(option: FlowDescriptionType);
 
     prepareAsyncImage(): Promise<void>;
 
@@ -66,39 +44,16 @@ declare module "@/utils/flow-utils.js" {
   }
 
   export class FlowOpenLayers extends WebGLTileLayer {
-    constructor(option: {
-      seeding: string[];
-      constraints: {
-        maxDropRate: number;
-        maxDropRateBump: number;
-        maxSegmentNum: number;
-        maxTrajectoryNum: number;
-        maxTextureSize: number;
-      };
-      extent: number[];
-      flowBoundary: {
-        uMax: number;
-        uMin: number;
-        vMax: number;
-        vMin: number;
-      };
-      flowFields: string[];
-      projection: {
-        projectionMapbox: string;
-        projectionCesium: string;
-        projectionOl: string;
-      };
-      textureSize: {
-        seeding: number[];
-        flowField: number[];
-        projection: number[];
-      };
-
-      frequency?: number;
-      lineNumber?: number;
-    });
+    imagePre: number;
+    count: number;
+    frequency: number;
+    eventObj: EventObj;
+    option: FlowDescriptionType;
+    constructor(option: FlowDescriptionType);
 
     prepareAsyncImage(): Promise<void>;
+
+    render(gl: WebGL2RenderingContext, matrix: number[]): void;
 
     changeState(index: number): void;
   }

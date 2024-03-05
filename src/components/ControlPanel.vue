@@ -45,7 +45,5 @@ export default defineComponent({
 <style scoped lang="scss">
 .control-panel {
   position: absolute;
-  top: 5.1rem;
-  left: 0.5rem;
 }
 </style>

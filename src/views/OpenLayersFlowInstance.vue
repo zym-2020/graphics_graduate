@@ -1,23 +1,41 @@
 <template>
   <div class="container" ref="container"></div>
-  <control-panel :eventObj="flowMapbox.eventObj" :option="flowMapbox.option"></control-panel>
-  <process-component :flowInstance="flowMapbox"></process-component>
+  <control-panel :eventObj="flowOpenLayers.eventObj" :option="flowOpenLayers.option"></control-panel>
+  <process-component :flowInstance="flowOpenLayers"></process-component>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import mapBoxGl, { MapboxOptions } from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import { defineComponent, ref, onMounted } from "vue";
+import { defaults as defaultControls } from "ol/control";
+import WebGLTileLayer from "ol/layer/WebGLTile.js";
+import { Map, View } from "ol";
+import OSM from "ol/source/OSM.js";
+import { FlowOpenLayers } from "@/utils/flow-utils.js";
 import ProcessComponent from "@/components/ProcessComponent.vue";
 import ControlPanel from "@/components/ControlPanel.vue";
-import { FlowMapbox } from "@/utils/flow-utils.js";
 export default defineComponent({
-  components: { ControlPanel, ProcessComponent },
+  components: {
+    ControlPanel,
+    ProcessComponent,
+  },
   setup() {
     const container = ref<HTMLDivElement>();
-    let map: mapBoxGl.Map;
-    const flowMapbox = ref<FlowMapbox>(
-      new FlowMapbox({
+    let map: Map;
+
+    const OSMLayer = new WebGLTileLayer({
+      source: new OSM({
+        url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        // url: "http://t0.tianditu.com/vec_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
+      }),
+    });
+    const TDTLayer = new WebGLTileLayer({
+      source: new OSM({
+        url: "https://tile.thunderforest.com/transport-dark/{z}/{x}/{y}.png?apikey=2d56ae4b9a10405c8d232dcdf2b94a6f",
+        // url: "http://t0.tianditu.com/cva_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
+      }),
+    });
+    const flowOpenLayers = ref<FlowOpenLayers>(
+      new FlowOpenLayers({
         seeding: [
           "/flow/texture/mask_100.png",
           "/flow/texture/mask_101.png",
@@ -112,7 +130,7 @@ export default defineComponent({
           "/flow/texture/uv_125.png",
           "/flow/texture/uv_126.png",
         ],
-        projection: "/flow/texture/projection_mapbox.png",
+        projection: "/flow/texture/projection_ol.png",
         textureSize: {
           seeding: [1024, 558],
           flowField: [1024, 558],
@@ -120,60 +138,27 @@ export default defineComponent({
         },
       })
     );
-
-    const initMap = (layer: { id: string; type: "custom"; onAdd(map: any, gl: any): void; render(gl: any, matrix: any): void }) => {
-      const mapOpt: MapboxOptions & { useWebGL2: boolean } = {
-        container: container.value!,
-        style: "mapbox://styles/johnnyt/clblx2t3v000a14proaq4e9qv",
-        center: [121.024075, 31.765318],
-        zoom: 8.8,
-        useWebGL2: true,
-        antialias: true,
-        accessToken: "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
-        // style: {
-        //   version: 8,
-        //   sources: {
-        //     tdtVec: {
-        //       type: "raster",
-        //       tiles: [
-        //         "http://t0.tianditu.com/vec_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
-        //       ],
-        //       tileSize: 256,
-        //     },
-        //     txt: {
-        //       type: "raster",
-        //       tiles: [
-        //         "http://t0.tianditu.com/cva_w/wmts?tk=35a94ab5985969d0b93229c30db6abd6&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=tiles",
-        //       ],
-        //       tileSize: 256,
-        //     },
-        //   },
-        //   layers: [
-        //     {
-        //       id: "tdtVec",
-        //       type: "raster",
-        //       source: "tdtVec",
-        //     },
-        //     {
-        //       id: "txt",
-        //       type: "raster",
-        //       source: "txt",
-        //     },
-        //   ],
-        // },
-      };
-      map = new mapBoxGl.Map(mapOpt);
-      map.on("load", () => {
-        map.addLayer(layer);
+    const initMap = async () => {
+      await flowOpenLayers.value.prepareAsyncImage();
+      map = new Map({
+        target: container.value,
+        layers: [OSMLayer, TDTLayer, flowOpenLayers.value as any],
+        view: new View({
+          center: [121.024075, 31.765318],
+          projection: "EPSG:4326",
+          zoom: 10,
+        }),
+        controls: defaultControls({
+          zoom: false,
+          rotate: false,
+          attribution: false,
+        }),
       });
     };
 
-    onMounted(async () => {
-      const layer = await flowMapbox.value.generateCustomLayer("flow");
-      initMap(layer);
-    });
+    onMounted(initMap);
 
-    return { container, flowMapbox };
+    return { container, flowOpenLayers };
   },
 });
 </script>

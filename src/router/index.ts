@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,20 +23,6 @@ const routes: Array<RouteRecordRaw> = [
         path: "",
         name: "MapboxSymbol",
         component: () => import("@/views/MapboxSymbol.vue"),
-        meta: {
-          keepAlive: true,
-        },
-      },
-    ],
-  },
-  {
-    path: "/mapboxFlow",
-    component: () => import("@/layout/Layout.vue"),
-    children: [
-      {
-        path: "",
-        name: "MapboxFlow",
-        component: () => import("@/views/MapboxFlow.vue"),
         meta: {
           keepAlive: true,
         },
@@ -101,13 +86,13 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/cesiumFlow",
+    path: "/cesiumFlowInstance",
     component: () => import("@/layout/Layout.vue"),
     children: [
       {
         path: "",
-        name: "CesiumFlow",
-        component: () => import("@/views/CesiumFlow.vue"),
+        name: "CesiumFlowInstance",
+        component: () => import("@/views/CesiumFlowInstance.vue"),
         meta: {
           keepAlive: true,
         },
@@ -129,13 +114,13 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/olFlow",
+    path: "/olFlowInstance",
     component: () => import("@/layout/Layout.vue"),
     children: [
       {
         path: "",
-        name: "OlFlow",
-        component: () => import("@/views/OpenlayersFlow.vue"),
+        name: "OlFlowInstance",
+        component: () => import("@/views/OpenLayersFlowInstance.vue"),
         meta: {
           keepAlive: true,
         },

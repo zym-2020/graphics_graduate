@@ -29,6 +29,8 @@ export class FlowMapbox {
 
   _beginBlock = -1.0;
 
+  frequency = 0;
+
   count = 0;
   flag = true;
   imagePre = 0;
@@ -54,7 +56,7 @@ export class FlowMapbox {
       this._segmentNumber = value;
     },
     fillWidth: (value) => {
-      this.fillWidth = value;
+      this._fillWidth = value;
     },
     aaWidth: (value) => {
       this._aaWidth = value;
@@ -75,6 +77,7 @@ export class FlowMapbox {
 
   constructor(option) {
     this.option = option;
+    this.frequency = this.option.frequency ? this.option.frequency : 200;
     this._segmentPrepare = option.constraints.maxSegmentNum;
     this._shaderScriptMap.set(
       FlowEnum.UPDATE_VERTEX,
@@ -476,7 +479,7 @@ export class FlowMapbox {
       promiseArr.push(this.getImage(FlowEnum.FLOW_FIELD_IMAGE + i, this.option.flowFields[i], "flipY"));
       promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + i, this.option.seeding[i], "flipY"));
     }
-    promiseArr.push(this.getImage(FlowEnum.PROJECTION_MAPBOX_IMAGE, this.option.projection.projectionMapbox, "flipY"));
+    promiseArr.push(this.getImage(FlowEnum.PROJECTION_MAPBOX_IMAGE, this.option.projection, "flipY"));
     await Promise.all(promiseArr);
   }
 
@@ -658,10 +661,10 @@ export class FlowMapbox {
   }
 
   tickLogicCount(gl) {
-    this._beginBlock = (this._beginBlock + 1) % 16;
+    this._beginBlock = (this._beginBlock + 1) % this.option.constraints.maxSegmentNum;
     this.swap();
-    const frequency = this.option.frequency ? this.option.frequency : 200;
-    this._uboMapBuffer[0] = this.count / frequency;
+
+    this._uboMapBuffer[0] = this.count / this.frequency;
     this._uboMapBuffer[1] = this._segmentNumber;
     this._uboMapBuffer[2] = this.option.constraints.maxSegmentNum * 10;
     this._uboMapBuffer[3] = this._fixedDropRate;
@@ -669,7 +672,7 @@ export class FlowMapbox {
     this._uboMapBuffer[5] = this._speedFactor * 0.01 * 100;
     this._uboMapBuffer[6] = this._color;
 
-    if (this.count === frequency && this.flag) {
+    if (this.count === this.frequency && this.flag) {
       this.flag = false;
       this.imagePre = this.imageNext;
       this.imageNext = (this.imageNext + 1) % this.option.flowFields.length;
@@ -809,6 +812,7 @@ export class FlowMapbox {
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendColor(0.0, 0.0, 0.0, 0.0);
+    gl.clearColor(0, 0, 0, 1);
     gl.blendEquation(gl.FUNC_ADD);
     gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     this._trajectoryProgram.useProgram(gl);
@@ -855,10 +859,11 @@ export class FlowMapbox {
     return result;
   }
 
-  changeState(index) {
-    if (!this._gl || index >= this.option.flowFields.length) return;
+  changeState(value) {
+    if (!this._gl || value >= this.option.flowFields.length * this.frequency) return;
     const gl = this._gl;
     this.flag = false;
+    const index = Math.floor(value / this.frequency);
     this.imagePre = index;
     this.imageNext = (index + 1) % this.option.flowFields.length;
     const promiseArr = [];
@@ -868,7 +873,7 @@ export class FlowMapbox {
     promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + "1", this.option.seeding[this.imageNext], "flipY"));
     Promise.all(promiseArr).then((res) => {
       this.flag = true;
-      this.count = 0;
+      this.count = value % this.frequency;
       const flowFieldTexture0 = createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RG32F, 0, 0);
       fillTexture(
         gl,
@@ -966,13 +971,55 @@ export class FlowCesium {
 
   _beginBlock = -1.0;
 
+  frequency = 0;
+
   count = 0;
   flag = true;
   imagePre = 0;
   imageNext = 1;
 
+  _speedFactor = 0;
+  _tracksNumber = 0;
+  _segmentNumber = 0;
+  _fillWidth = 0;
+  _aaWidth = 0;
+  _color = 0;
+  _primitive = 0;
+  _fixedDropRate = 0;
+  _extraDropRate = 0;
+  eventObj = {
+    speedFactor: (value) => {
+      this._speedFactor = value;
+    },
+    tracksNumber: (value) => {
+      this._tracksNumber = value;
+    },
+    segmentNumber: (value) => {
+      this._segmentNumber = value;
+    },
+    fillWidth: (value) => {
+      this._fillWidth = value;
+    },
+    aaWidth: (value) => {
+      this._aaWidth = value;
+    },
+    color: (value) => {
+      this._color = value;
+    },
+    primitive: (value) => {
+      this._primitive = value;
+    },
+    fixedDropRate: (value) => {
+      this._fixedDropRate = value;
+    },
+    extraDropRate: (value) => {
+      this._extraDropRate = value;
+    },
+  };
+
   constructor(option) {
     this.option = option;
+    this.frequency = this.option.frequency ? this.option.frequency : 200;
     this._segmentPrepare = option.constraints.maxSegmentNum;
     this._shaderScriptMap.set(
       FlowEnum.UPDATE_VERTEX,
@@ -1357,6 +1404,15 @@ export class FlowCesium {
     }
     `
     );
+    this._segmentNumber = option.parameter.segmentNumber;
+    this._speedFactor = option.parameter.speedFactor;
+    this._tracksNumber = option.parameter.tracksNumber;
+    this._fillWidth = option.parameter.fillWidth;
+    this._aaWidth = option.parameter.aaWidth;
+    this._color = option.parameter.color;
+    this._primitive = option.parameter.primitive;
+    this._fixedDropRate = option.parameter.fixedDropRate;
+    this._extraDropRate = option.parameter.extraDropRate;
   }
   async prepareAsyncImage() {
     const promiseArr = [];
@@ -1364,7 +1420,7 @@ export class FlowCesium {
       promiseArr.push(this.getImage(FlowEnum.FLOW_FIELD_IMAGE + i, this.option.flowFields[i], "flipY"));
       promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + i, this.option.seeding[i], "flipY"));
     }
-    promiseArr.push(this.getImage(FlowEnum.PROJECTION_CESIUM_IMAGE, this.option.projection.projectionCesium, "flipY"));
+    promiseArr.push(this.getImage(FlowEnum.PROJECTION_CESIUM_IMAGE, this.option.projection, "flipY"));
     await Promise.all(promiseArr);
   }
 
@@ -1551,18 +1607,17 @@ export class FlowCesium {
   }
 
   tickLogicCount(gl) {
-    this._beginBlock = (this._beginBlock + 1) % 16;
+    this._beginBlock = (this._beginBlock + 1) % this.option.constraints.maxSegmentNum;
     this.swap();
-    const frequency = this.option.frequency ? this.option.frequency : 200;
-    this._uboMapBuffer[0] = this.count / frequency;
-    this._uboMapBuffer[1] = this.option.constraints.maxSegmentNum;
+    this._uboMapBuffer[0] = this.count / this.frequency;
+    this._uboMapBuffer[1] = this._segmentNumber;
     this._uboMapBuffer[2] = this.option.constraints.maxSegmentNum * 10;
-    this._uboMapBuffer[3] = 0.003;
-    this._uboMapBuffer[4] = 0.001;
-    this._uboMapBuffer[5] = 2.0 * 0.01 * 100;
-    this._uboMapBuffer[6] = 0;
+    this._uboMapBuffer[3] = this._fixedDropRate;
+    this._uboMapBuffer[4] = this._extraDropRate;
+    this._uboMapBuffer[5] = this._speedFactor * 0.01 * 100;
+    this._uboMapBuffer[6] = this._color;
 
-    if (this.count === frequency && this.flag) {
+    if (this.count === this.frequency && this.flag) {
       this.flag = false;
       this.imagePre = this.imageNext;
       this.imageNext = (this.imageNext + 1) % this.option.flowFields.length;
@@ -1662,8 +1717,7 @@ export class FlowCesium {
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
 
-    const lineNumber = this.option.lineNumber ? this.option.lineNumber : 10000;
-    gl.drawArrays(gl.POINTS, 0, lineNumber);
+    gl.drawArrays(gl.POINTS, 0, this._tracksNumber);
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
@@ -1712,12 +1766,12 @@ export class FlowCesium {
     this._trajectoryProgram.setInt(gl, "beginBlock", this._beginBlock);
     this._trajectoryProgram.setInt(gl, "blockSize", maxBlockSize);
     this._trajectoryProgram.setFloat(gl, "currentSegmentNum", 8.0);
-    this._trajectoryProgram.setFloat(gl, "fillWidth", 1);
-    this._trajectoryProgram.setFloat(gl, "aaWidth", 2);
+    this._trajectoryProgram.setFloat(gl, "fillWidth", this._fillWidth);
+    this._trajectoryProgram.setFloat(gl, "aaWidth", this._aaWidth);
     this._trajectoryProgram.setFloat2(gl, "viewport", gl.canvas.width, gl.canvas.height);
     this._trajectoryProgram.setMat4(gl, "u_matrix", matrix);
     this._trajectoryProgram.setUniformBlock(gl, "FlowFieldUniforms", 0);
-    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (16 - 1) * 2, lineNumber);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (this._segmentNumber - 1) * 2, this._tracksNumber);
 
     gl.disable(gl.BLEND);
 
@@ -1731,10 +1785,11 @@ export class FlowCesium {
     this.tickRender(gl, matrix);
   }
 
-  changeState(index) {
-    if (!this._gl || index >= this.option.flowFields.length) return;
+  changeState(value) {
+    if (!this._gl || value >= this.option.flowFields.length * this.frequency) return;
     const gl = this._gl;
     this.flag = false;
+    const index = Math.floor(value / this.frequency)
     this.imagePre = index;
     this.imageNext = (index + 1) % this.option.flowFields.length;
     const promiseArr = [];
@@ -1842,14 +1897,56 @@ export class FlowOpenLayers extends WebGLTileLayer {
 
   _beginBlock = -1.0;
 
+  frequency = 0;
+
   count = 0;
   flag = true;
   imagePre = 0;
   imageNext = 1;
 
+  _speedFactor = 0;
+  _tracksNumber = 0;
+  _segmentNumber = 0;
+  _fillWidth = 0;
+  _aaWidth = 0;
+  _color = 0;
+  _primitive = 0;
+  _fixedDropRate = 0;
+  _extraDropRate = 0;
+  eventObj = {
+    speedFactor: (value) => {
+      this._speedFactor = value;
+    },
+    tracksNumber: (value) => {
+      this._tracksNumber = value;
+    },
+    segmentNumber: (value) => {
+      this._segmentNumber = value;
+    },
+    fillWidth: (value) => {
+      this._fillWidth = value;
+    },
+    aaWidth: (value) => {
+      this._aaWidth = value;
+    },
+    color: (value) => {
+      this._color = value;
+    },
+    primitive: (value) => {
+      this._primitive = value;
+    },
+    fixedDropRate: (value) => {
+      this._fixedDropRate = value;
+    },
+    extraDropRate: (value) => {
+      this._extraDropRate = value;
+    },
+  };
+
   constructor(option) {
     super({});
     this.option = option;
+    this.frequency = this.option.frequency ? this.option.frequency : 200;
     this._segmentPrepare = option.constraints.maxSegmentNum;
     this._shaderScriptMap.set(
       FlowEnum.UPDATE_VERTEX,
@@ -2238,6 +2335,15 @@ export class FlowOpenLayers extends WebGLTileLayer {
     }
     `
     );
+    this._segmentNumber = option.parameter.segmentNumber;
+    this._speedFactor = option.parameter.speedFactor;
+    this._tracksNumber = option.parameter.tracksNumber;
+    this._fillWidth = option.parameter.fillWidth;
+    this._aaWidth = option.parameter.aaWidth;
+    this._color = option.parameter.color;
+    this._primitive = option.parameter.primitive;
+    this._fixedDropRate = option.parameter.fixedDropRate;
+    this._extraDropRate = option.parameter.extraDropRate;
   }
   async prepareAsyncImage() {
     const promiseArr = [];
@@ -2245,7 +2351,7 @@ export class FlowOpenLayers extends WebGLTileLayer {
       promiseArr.push(this.getImage(FlowEnum.FLOW_FIELD_IMAGE + i, this.option.flowFields[i], "flipY"));
       promiseArr.push(this.getImage(FlowEnum.SEEDING_IMAGE + i, this.option.seeding[i], "flipY"));
     }
-    promiseArr.push(this.getImage(FlowEnum.PROJECTION_OL_IMAGE, this.option.projection.projectionOl, "flipY"));
+    promiseArr.push(this.getImage(FlowEnum.PROJECTION_OL_IMAGE, this.option.projection, "flipY"));
     await Promise.all(promiseArr);
   }
 
@@ -2432,18 +2538,17 @@ export class FlowOpenLayers extends WebGLTileLayer {
   }
 
   tickLogicCount(gl) {
-    this._beginBlock = (this._beginBlock + 1) % 16;
+    this._beginBlock = (this._beginBlock + 1) % this.option.constraints.maxSegmentNum;
     this.swap();
-    const frequency = this.option.frequency ? this.option.frequency : 200;
-    this._uboMapBuffer[0] = this.count / frequency;
-    this._uboMapBuffer[1] = this.option.constraints.maxSegmentNum;
+    this._uboMapBuffer[0] = this.count / this.frequency;
+    this._uboMapBuffer[1] = this._segmentNumber;
     this._uboMapBuffer[2] = this.option.constraints.maxSegmentNum * 10;
-    this._uboMapBuffer[3] = 0.003;
-    this._uboMapBuffer[4] = 0.001;
-    this._uboMapBuffer[5] = 2.0 * 0.01 * 100;
-    this._uboMapBuffer[6] = 2;
+    this._uboMapBuffer[3] = this._fixedDropRate;
+    this._uboMapBuffer[4] = this._extraDropRate;
+    this._uboMapBuffer[5] = this._speedFactor * 0.01 * 100;
+    this._uboMapBuffer[6] = this._color;
 
-    if (this.count === frequency && this.flag) {
+    if (this.count === this.frequency && this.flag) {
       this.flag = false;
       this.imagePre = this.imageNext;
       this.imageNext = (this.imageNext + 1) % this.option.flowFields.length;
@@ -2543,8 +2648,7 @@ export class FlowOpenLayers extends WebGLTileLayer {
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
 
-    const lineNumber = this.option.lineNumber ? this.option.lineNumber : 10000;
-    gl.drawArrays(gl.POINTS, 0, lineNumber);
+    gl.drawArrays(gl.POINTS, 0, this._tracksNumber);
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
@@ -2593,14 +2697,14 @@ export class FlowOpenLayers extends WebGLTileLayer {
     this._trajectoryProgram.setInt(gl, "beginBlock", this._beginBlock);
     this._trajectoryProgram.setInt(gl, "blockSize", maxBlockSize);
     this._trajectoryProgram.setFloat(gl, "currentSegmentNum", 8.0);
-    this._trajectoryProgram.setFloat(gl, "fillWidth", 1);
-    this._trajectoryProgram.setFloat(gl, "aaWidth", 2);
+    this._trajectoryProgram.setFloat(gl, "fillWidth", this._fillWidth);
+    this._trajectoryProgram.setFloat(gl, "aaWidth", this._aaWidth);
     this._trajectoryProgram.setFloat2(gl, "viewport", gl.canvas.width, gl.canvas.height);
     this._trajectoryProgram.setFloat3(gl, "transform_a", frameState.coordinateToPixelTransform[0], frameState.coordinateToPixelTransform[2], frameState.coordinateToPixelTransform[4]);
     this._trajectoryProgram.setFloat3(gl, "transform_b", frameState.coordinateToPixelTransform[1], frameState.coordinateToPixelTransform[3], frameState.coordinateToPixelTransform[5]);
     this._trajectoryProgram.setFloat2(gl, "pixel_size", frameState.size[0], frameState.size[1]);
     this._trajectoryProgram.setUniformBlock(gl, "FlowFieldUniforms", 0);
-    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (16 - 1) * 2, lineNumber);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, (this._segmentNumber - 1) * 2, this._tracksNumber);
 
     gl.disable(gl.BLEND);
 
@@ -2622,10 +2726,11 @@ export class FlowOpenLayers extends WebGLTileLayer {
     return canvas;
   }
 
-  changeState(index) {
-    if (!this._gl || index >= this.option.flowFields.length) return;
+  changeState(value) {
+    if (!this._gl || value >= this.option.flowFields.length * this.frequency) return;
     const gl = this._gl;
     this.flag = false;
+    const index = Math.floor(value / this.frequency)
     this.imagePre = index;
     this.imageNext = (index + 1) % this.option.flowFields.length;
     const promiseArr = [];

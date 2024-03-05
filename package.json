@@ -18,7 +18,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.8.3",
     "dat.gui": "^0.7.9",
-    "element-plus": "^2.3.14",
+    "element-plus": "^2.6.0",
     "gl-matrix": "^3.4.3",
     "mapbox-gl": "^2.15.0",
     "ol": "^8.1.0",
