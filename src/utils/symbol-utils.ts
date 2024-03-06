@@ -43,35 +43,62 @@ export class SymbolHandle {
     });
   }
 
-  async getData(positionJsonAddress: string, infoJsonAddress: string, type: string) {
+  async getData(positionJsonAddress: string, infoJsonAddress: string, type?: string) {
     const positionPromise = new Promise((resolve, reject) => {
       axios.get(positionJsonAddress).then((res) => resolve(res.data));
     });
     const infoPromise = new Promise((resolve, reject) => {
       axios.get(infoJsonAddress).then((res) => resolve(res.data));
     });
-    return Promise.all([infoPromise, positionPromise]).then((res) => {
-      const arr = (res[0] as any).markers.description;
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === type) {
-          const instanceNum = Math.ceil(arr[i].length / this.number);
-          for (let j = 0; j < (res[1] as any).features.length; j++) {
-            const item = (res[1] as any).features[j];
-            const coord = MercatorCoordinate.fromLngLat({
-              lng: item.geometry.coordinates[0],
-              lat: item.geometry.coordinates[1],
-            });
-            for (let k = 0; k < instanceNum; k++) {
-              this.simpleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
-              const positionX = encodeFloatToDouble(coord.x);
-              const positionY = encodeFloatToDouble(coord.y);
-              this.position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
-              this.rotationArray.push(0);
+    if (type) {
+      return Promise.all([infoPromise, positionPromise]).then((res) => {
+        const arr = (res[0] as any).markers.description;
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].name === type) {
+            const instanceNum = Math.ceil(arr[i].length / this.number);
+            for (let j = 0; j < (res[1] as any).features.length; j++) {
+              const item = (res[1] as any).features[j];
+              const coord = MercatorCoordinate.fromLngLat({
+                lng: item.geometry.coordinates[0],
+                lat: item.geometry.coordinates[1],
+              });
+              for (let k = 0; k < instanceNum; k++) {
+                this.simpleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
+                const positionX = encodeFloatToDouble(coord.x);
+                const positionY = encodeFloatToDouble(coord.y);
+                this.position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
+                this.rotationArray.push(0);
+              }
             }
           }
         }
-      }
-    });
+      });
+    } else {
+      return Promise.all([infoPromise, positionPromise]).then((res) => {
+        const arr = (res[0] as any).markers.description;
+
+        for (let j = 0; j < (res[1] as any).features.length; j++) {
+          let randomNumber;
+          do {
+            randomNumber = Math.floor(Math.random() * 6);
+          } while (randomNumber === 3);
+          const rotation = 360 * Math.random()
+          const instanceNum = Math.ceil(arr[randomNumber].length / this.number);
+          const item = (res[1] as any).features[j];
+          const coord = MercatorCoordinate.fromLngLat({
+            lng: item.geometry.coordinates[0],
+            lat: item.geometry.coordinates[1],
+          });
+          for (let k = 0; k < instanceNum; k++) {
+            this.simpleArray.push(arr[randomNumber].base, arr[randomNumber].length, k, arr[randomNumber].ID);
+            const positionX = encodeFloatToDouble(coord.x);
+            const positionY = encodeFloatToDouble(coord.y);
+            this.position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
+            this.rotationArray.push(rotation);
+          }
+        }
+      });
+    }
   }
 
   myBindTexture(gl: WebGL2RenderingContext) {

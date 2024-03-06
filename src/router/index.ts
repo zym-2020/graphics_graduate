@@ -16,20 +16,6 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/mapboxSymbol",
-    component: () => import("@/layout/Layout.vue"),
-    children: [
-      {
-        path: "",
-        name: "MapboxSymbol",
-        component: () => import("@/views/MapboxSymbol.vue"),
-        meta: {
-          keepAlive: true,
-        },
-      },
-    ],
-  },
-  {
     path: "/mapboxSymbolInstance",
     component: () => import("@/layout/Layout.vue"),
     children: [
@@ -58,13 +44,13 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/cesiumSymbol",
+    path: "/cesiumSymbolInstance",
     component: () => import("@/layout/Layout.vue"),
     children: [
       {
         path: "",
-        name: "CesiumSymbol",
-        component: () => import("@/views/CesiumSymbol.vue"),
+        name: "CesiumSymbolInstance",
+        component: () => import("@/views/CesiumSymbolInstance.vue"),
         meta: {
           keepAlive: true,
         },
@@ -99,20 +85,7 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
-  {
-    path: "/olSymbol",
-    component: () => import("@/layout/Layout.vue"),
-    children: [
-      {
-        path: "",
-        name: "OlSymbol",
-        component: () => import("@/views/OpenLayersSymbol.vue"),
-        meta: {
-          keepAlive: true,
-        },
-      },
-    ],
-  },
+
   {
     path: "/olFlowInstance",
     component: () => import("@/layout/Layout.vue"),
@@ -121,6 +94,20 @@ const routes: Array<RouteRecordRaw> = [
         path: "",
         name: "OlFlowInstance",
         component: () => import("@/views/OpenLayersFlowInstance.vue"),
+        meta: {
+          keepAlive: true,
+        },
+      },
+    ],
+  },
+  {
+    path: "/olSymbolInstance",
+    component: () => import("@/layout/Layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "OlSymbolInstance",
+        component: () => import("@/views/OpenLayersSymbolInstance.vue"),
         meta: {
           keepAlive: true,
         },

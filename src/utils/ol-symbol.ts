@@ -17,13 +17,14 @@ export class CustomLayer extends WebGLTileLayer {
   paletteImage: HTMLImageElement | null = null;
   vertexArray: number[] = [];
   instanceNum: number = 0;
+  pixelSize: number = 25;
 
   gl: WebGL2RenderingContext | null = null;
   program: WebGLProgram | null = null;
   renderVAO: WebGLVertexArrayObject | null = null;
   symbolTexture: WebGLTexture | null = null;
   paletteTexture: WebGLTexture | null = null;
-  constructor(vertexAddress: string, fragmentAddress: string, symbolImageAddress: string, paletteImageAddress: string, descriptionAddress: string, poistionAddress: string) {
+  constructor(vertexAddress: string, fragmentAddress: string, symbolImageAddress: string, paletteImageAddress: string, descriptionAddress: string, poistionAddress: string, pixelSize?: number) {
     super({});
     this.vertexAddress = vertexAddress;
     this.fragmentAddress = fragmentAddress;
@@ -31,8 +32,11 @@ export class CustomLayer extends WebGLTileLayer {
     this.paletteImageAddress = paletteImageAddress;
     this.descriptionAddress = descriptionAddress;
     this.poistionAddress = poistionAddress;
+    if (pixelSize) {
+      this.pixelSize = pixelSize;
+    }
   }
-  async prepareData(type: string, number: number) {
+  async prepareData(number: number, type?: string) {
     const vertexScriptPromise: Promise<string> = axios.get(this.vertexAddress).then((res) => res.data);
     const fragmentScriptPromise: Promise<string> = axios.get(this.fragmentAddress).then((res) => res.data);
     const symbolImagePromise: Promise<HTMLImageElement> = new Promise((resolve, reject) => {
@@ -62,26 +66,48 @@ export class CustomLayer extends WebGLTileLayer {
 
       const rotationArray: number[] = [];
       const arr = (res[4] as any).markers.description;
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === type) {
-          const instanceNum = Math.ceil(arr[i].length / number);
-          for (let j = 0; j < (res[5] as any).features.length; j++) {
-            const item = (res[5] as any).features[j];
-            // const coord = fromLonLat([item.geometry.coordinates[0], item.geometry.coordinates[1]], "EPSG:3857");
-            // const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
-            const positionX = encodeFloatToDouble(item.geometry.coordinates[0]);
-            const positionY = encodeFloatToDouble(item.geometry.coordinates[1]);
-            for (let k = 0; k < instanceNum; k++) {
-              sampleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
-              position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
-              rotationArray.push(0);
+      if (type) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].name === type) {
+            const instanceNum = Math.ceil(arr[i].length / number);
+            for (let j = 0; j < (res[5] as any).features.length; j++) {
+              const item = (res[5] as any).features[j];
+              // const coord = fromLonLat([item.geometry.coordinates[0], item.geometry.coordinates[1]], "EPSG:3857");
+              // const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
+              const positionX = encodeFloatToDouble(item.geometry.coordinates[0]);
+              const positionY = encodeFloatToDouble(item.geometry.coordinates[1]);
+              for (let k = 0; k < instanceNum; k++) {
+                sampleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
+                position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
+                rotationArray.push(0);
+              }
             }
           }
         }
+        this.instanceNum = rotationArray.length;
+        this.vertexArray = [...sampleArray, ...position, ...rotationArray];
+      } else {
+        for (let j = 0; j < (res[5] as any).features.length; j++) {
+          let randomNumber;
+          do {
+            randomNumber = Math.floor(Math.random() * 6);
+          } while (randomNumber === 3);
+          const rotation = 360 * Math.random();
+          const instanceNum = Math.ceil(arr[randomNumber].length / number);
+          const item = (res[5] as any).features[j];
+          // const coord = fromLonLat([item.geometry.coordinates[0], item.geometry.coordinates[1]], "EPSG:3857");
+          // const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
+          const positionX = encodeFloatToDouble(item.geometry.coordinates[0]);
+          const positionY = encodeFloatToDouble(item.geometry.coordinates[1]);
+          for (let k = 0; k < instanceNum; k++) {
+            sampleArray.push(arr[randomNumber].base, arr[randomNumber].length, k, arr[randomNumber].ID);
+            position.push(positionX[0], positionY[0], positionX[1], positionY[1]);
+            rotationArray.push(rotation);
+          }
+        }
+        this.instanceNum = rotationArray.length;
+        this.vertexArray = [...sampleArray, ...position, ...rotationArray];
       }
-      this.instanceNum = rotationArray.length;
-      this.vertexArray = [...sampleArray, ...position, ...rotationArray];
-
     });
   }
 
@@ -131,7 +157,7 @@ export class CustomLayer extends WebGLTileLayer {
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
         gl.bindTexture(gl.TEXTURE_2D, this.paletteTexture);
-        
+
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.paletteImage);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -149,7 +175,7 @@ export class CustomLayer extends WebGLTileLayer {
       this.gl.useProgram(this.program);
       const modelMatrix = mat4.create();
       mat4.identity(modelMatrix);
-      mat4.scale(modelMatrix, modelMatrix, [25 * window.devicePixelRatio, 25 * window.devicePixelRatio, 1.0]);
+      mat4.scale(modelMatrix, modelMatrix, [this.pixelSize * window.devicePixelRatio, this.pixelSize * window.devicePixelRatio, 1.0]);
       const symbolMatrixLoc = this.gl.getUniformLocation(this.program!, "u_symbolMatrix");
       this.gl.uniformMatrix4fv(symbolMatrixLoc, false, modelMatrix);
       const bufferSizeLoc = this.gl.getUniformLocation(this.program!, "u_bufferSize");

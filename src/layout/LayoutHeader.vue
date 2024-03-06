@@ -7,8 +7,8 @@
         </div>
       </el-col>
       <el-col :span="3"><div class="item" @click="nav('/')">首页</div></el-col>
-      <el-col :span="3"><div class="item" @click="nav('/mapboxSymbol')">点符号渲染</div></el-col>
-      <el-col :span="3"><div class="item" @click="nav('/mapboxFlow')">流场渲染</div></el-col>
+      <el-col :span="3"><div class="item" @click="nav('/mapboxSymbolInstance')">点符号渲染</div></el-col>
+      <el-col :span="3"><div class="item" @click="nav('/mapboxFlowInstance')">流场渲染</div></el-col>
     </el-row>
   </div>
 </template>

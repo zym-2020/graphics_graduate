@@ -34,7 +34,7 @@ export class CesiumSymbol {
     this.poistionAddress = poistionAddress;
   }
 
-  async prepareData(type: string, number: number) {
+  async prepareData(number: number, type?: string) {
     const vertexScriptPromise: Promise<string> = axios.get(this.vertexAddress).then((res) => res.data);
     const fragmentScriptPromise: Promise<string> = axios.get(this.fragmentAddress).then((res) => res.data);
     const symbolImagePromise: Promise<HTMLImageElement> = new Promise((resolve, reject) => {
@@ -64,26 +64,50 @@ export class CesiumSymbol {
       const positionLow: number[] = [];
       const rotationArray: number[] = [];
       const arr = (res[4] as any).markers.description;
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].name === type) {
-          const instanceNum = Math.ceil(arr[i].length / number);
-          for (let j = 0; j < (res[5] as any).features.length; j++) {
-            const item = (res[5] as any).features[j];
-            const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
-            const positionX = encodeFloatToDouble(coord.x);
-            const positionY = encodeFloatToDouble(coord.y);
-            const positionZ = encodeFloatToDouble(coord.z);
-            for (let k = 0; k < instanceNum; k++) {
-              sampleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
-              positionHigh.push(positionX[0], positionY[0], positionZ[0]);
-              positionLow.push(positionX[1], positionY[1], positionZ[1]);
-              rotationArray.push(0);
+      if (type) {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].name === type) {
+            const instanceNum = Math.ceil(arr[i].length / number);
+            for (let j = 0; j < (res[5] as any).features.length; j++) {
+              const item = (res[5] as any).features[j];
+              const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
+              const positionX = encodeFloatToDouble(coord.x);
+              const positionY = encodeFloatToDouble(coord.y);
+              const positionZ = encodeFloatToDouble(coord.z);
+              for (let k = 0; k < instanceNum; k++) {
+                sampleArray.push(arr[i].base, arr[i].length, k, arr[i].ID);
+                positionHigh.push(positionX[0], positionY[0], positionZ[0]);
+                positionLow.push(positionX[1], positionY[1], positionZ[1]);
+                rotationArray.push(0);
+              }
             }
           }
         }
+        this.instanceNum = rotationArray.length;
+        this.vertexArray = [...sampleArray, ...positionHigh, ...positionLow, ...rotationArray];
+      } else {
+        for (let j = 0; j < (res[5] as any).features.length; j++) {
+          let randomNumber;
+          do {
+            randomNumber = Math.floor(Math.random() * 6);
+          } while (randomNumber === 3);
+          const rotation = 360 * Math.random();
+          const instanceNum = Math.ceil(arr[randomNumber].length / number);
+          const item = (res[5] as any).features[j];
+          const coord = Cesium.Cartesian3.fromDegrees(item.geometry.coordinates[0], item.geometry.coordinates[1]);
+          const positionX = encodeFloatToDouble(coord.x);
+          const positionY = encodeFloatToDouble(coord.y);
+          const positionZ = encodeFloatToDouble(coord.z);
+          for (let k = 0; k < instanceNum; k++) {
+            sampleArray.push(arr[randomNumber].base, arr[randomNumber].length, k, arr[randomNumber].ID);
+            positionHigh.push(positionX[0], positionY[0], positionZ[0]);
+            positionLow.push(positionX[1], positionY[1], positionZ[1]);
+            rotationArray.push(rotation);
+          }
+        }
+        this.instanceNum = rotationArray.length;
+        this.vertexArray = [...sampleArray, ...positionHigh, ...positionLow, ...rotationArray];
       }
-      this.instanceNum = rotationArray.length;
-      this.vertexArray = [...sampleArray, ...positionHigh, ...positionLow, ...rotationArray];
     });
   }
 

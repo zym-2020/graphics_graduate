@@ -18,12 +18,12 @@ export default defineComponent({
       const cesiumSymbol = new CesiumSymbol(
         "/symbol/shader/symbol3D.vert.glsl",
         "/symbol/shader/symbol3D.frag.glsl",
-        "/symbol/texture/strip.png",
-        "/symbol/texture/palette.png",
-        "/symbol/json/tbvs.json",
-        "/symbol/json/crossroad_NJ.geojson"
+        "/symbol/texture/strip_z.png",
+        "/symbol/texture/palette_z.png",
+        "/symbol/json/tbvs_z.json",
+        "/symbol/json/output.geojson"
       );
-      await cesiumSymbol.prepareData("campfire", 64);
+      await cesiumSymbol.prepareData(64);
 
       const view = new Viewer(container.value!, {
         msaaSamples: 2,
@@ -31,6 +31,7 @@ export default defineComponent({
         maximumRenderTimeChange: Infinity,
         // terrainProvider: Cesium.createWorldTerrain(),
       });
+      view.scene.postProcessStages.fxaa.enabled = true;
       // view.scene.globe.show = false;
       view.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(118.81259, 32.048116, 400000),
@@ -40,14 +41,26 @@ export default defineComponent({
         },
       });
 
+
+      const dataSource = new Cesium.GeoJsonDataSource();
+      await dataSource.load("/symbol/json/crossroad_NJ.geojson");
+      view.dataSources.add(dataSource);
+      dataSource.entities.values.forEach(function (entity) {
+        entity.billboard = new Cesium.BillboardGraphics({
+          image: "/symbol/texture/交叉路口.png", // 图标的路径
+          width: 32, // 图标的宽度
+          height: 32, // 图标的高度
+        });
+      });
+
       function _render_three_frame(scene: any, frustum: any, pass: any) {
         if (pass === "GLOBE") {
           const gl: WebGL2RenderingContext = scene.context._gl;
           cesiumSymbol.prepareRenderResource(gl);
-          cesiumSymbol.render(gl, 50, 118.81259, 32.048116, 64, Cesium.Matrix4.toArray(scene.context.uniformState.viewProjection));
+          cesiumSymbol.render(gl, 60, 118.81259, 32.048116, 64, Cesium.Matrix4.toArray(scene.context.uniformState.viewProjection));
         }
       }
-      (view.scene as any).render_external_frame_functions = [_render_three_frame]
+      (view.scene as any).render_external_frame_functions = [_render_three_frame];
       // if (!(view as any)._cesiumWidget.scene.render_external_frame_functions) (view.scene as any).render_external_frame_functions = [];
       // (view as any)._cesiumWidget.scene.render_external_frame_functions.push(_render_three_frame);
     };
@@ -61,7 +74,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .map {
   height: 100%;
 }

@@ -1789,7 +1789,7 @@ export class FlowCesium {
     if (!this._gl || value >= this.option.flowFields.length * this.frequency) return;
     const gl = this._gl;
     this.flag = false;
-    const index = Math.floor(value / this.frequency)
+    const index = Math.floor(value / this.frequency);
     this.imagePre = index;
     this.imageNext = (index + 1) % this.option.flowFields.length;
     const promiseArr = [];
@@ -2730,7 +2730,7 @@ export class FlowOpenLayers extends WebGLTileLayer {
     if (!this._gl || value >= this.option.flowFields.length * this.frequency) return;
     const gl = this._gl;
     this.flag = false;
-    const index = Math.floor(value / this.frequency)
+    const index = Math.floor(value / this.frequency);
     this.imagePre = index;
     this.imageNext = (index + 1) % this.option.flowFields.length;
     const promiseArr = [];
