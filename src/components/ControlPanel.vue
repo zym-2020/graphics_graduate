@@ -28,7 +28,7 @@ export default defineComponent({
       gui.add({ 轨迹线填充宽度: props.option?.parameter.fillWidth }, "轨迹线填充宽度", props.option?.constraints.minFillWidth, props.option?.constraints.maxFillWidth).onChange(eventObj.fillWidth);
       gui.add({ 轨迹线边界宽度: props.option?.parameter.aaWidth }, "轨迹线边界宽度", props.option?.constraints.minAAWidth, props.option?.constraints.maxAAWidth).onChange(eventObj.aaWidth);
       gui.add({ 着色方案: 0 }, "着色方案", [0, 1, 2]).onChange(eventObj.color);
-      gui.add({ 流线图元: 1 }, "流线图元", [0, 1, 2]).onChange(eventObj.primitive);
+      gui.add({ 轨迹图元: 1 }, "轨迹图元", [0, 1]).onChange(eventObj.primitive);
       gui.add({ 粒子固定死亡率: props.option?.parameter.fixedDropRate }, "粒子固定死亡率", props.option?.constraints.minFixedDropRate, props.option?.constraints.maxFixedDropRate).onChange(eventObj.fixedDropRate);
       gui.add({ 粒子浮动死亡率: props.option?.parameter.extraDropRate }, "粒子浮动死亡率", props.option?.constraints.minExtraDropRate, props.option?.constraints.maxExtraDropRate).onChange(eventObj.extraDropRate);
     };

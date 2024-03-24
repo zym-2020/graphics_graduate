@@ -109,7 +109,7 @@ export default defineComponent({
           "/flow/texture/uv_122.png",
           "/flow/texture/uv_123.png",
           "/flow/texture/uv_124.png",
-          "/flow/texture/uv_125.png",
+          "/flow/texture/uv_125.png", 
           "/flow/texture/uv_126.png",
         ],
         projection: "/flow/texture/projection_mapbox.png",
@@ -150,15 +150,22 @@ export default defineComponent({
         //   },
         //   layers: [
         //     {
-        //       id: "tdtVec",
-        //       type: "raster",
-        //       source: "tdtVec",
+        //       id: "background",
+        //       type: "background",
+        //       paint: {
+        //         "background-color": "black",
+        //       },
         //     },
-        //     {
-        //       id: "txt",
-        //       type: "raster",
-        //       source: "txt",
-        //     },
+        //     // {
+        //     //   id: "tdtVec",
+        //     //   type: "raster",
+        //     //   source: "tdtVec",
+        //     // },
+        //     // {
+        //     //   id: "txt",
+        //     //   type: "raster",
+        //     //   source: "txt",
+        //     // },
         //   ],
         // },
       };

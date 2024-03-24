@@ -772,7 +772,9 @@ export class FlowMapbox {
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
 
+    console.time()
     gl.drawArrays(gl.POINTS, 0, this._tracksNumber);
+    console.timeEnd()
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);
@@ -905,7 +907,7 @@ export class FlowMapbox {
         WebGL2RenderingContext.RG,
         WebGL2RenderingContext.FLOAT
       );
-      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "0", flowFieldTexture1);
+      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "1", flowFieldTexture1);
 
       const seedingTexture0 = createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RGBA8, 0, 0);
       fillTexture(
@@ -1831,7 +1833,7 @@ export class FlowCesium {
         WebGL2RenderingContext.RG,
         WebGL2RenderingContext.FLOAT
       );
-      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "0", flowFieldTexture1);
+      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "1", flowFieldTexture1);
 
       const seedingTexture0 = createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RGBA8, 0, 0);
       fillTexture(
@@ -2772,7 +2774,7 @@ export class FlowOpenLayers extends WebGLTileLayer {
         WebGL2RenderingContext.RG,
         WebGL2RenderingContext.FLOAT
       );
-      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "0", flowFieldTexture1);
+      this._textureMap.set(FlowEnum.FLOW_FIELD_TEXTURE + "1", flowFieldTexture1);
 
       const seedingTexture0 = createMyTexture(gl, 1, gl.TEXTURE_2D, WebGL2RenderingContext.RGBA8, 0, 0);
       fillTexture(

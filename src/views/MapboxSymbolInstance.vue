@@ -31,7 +31,7 @@ export default defineComponent({
         useWebGL2: true,
         antialias: true,
         accessToken: "pk.eyJ1Ijoiam9obm55dCIsImEiOiJja2xxNXplNjYwNnhzMm5uYTJtdHVlbTByIn0.f1GfZbFLWjiEayI6hb_Qvg",
-        style: "mapbox://styles/johnnyt/cl9cj370u004714pcdxhynqc9",
+        style: "mapbox://styles/johnnyt/cl9cj370u004714pcdxhynqc9"
         // style: "mapbox://styles/johnnyt/clblx2t3v000a14proaq4e9qv",
         // style: {
         //   version: 8,
