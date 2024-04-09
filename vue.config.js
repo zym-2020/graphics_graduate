@@ -44,5 +44,6 @@ module.exports = defineConfig({
       }),
     ],
   },
-  publicPath: "./"
+  publicPath: "./",
+  outputDir: 'docs'
 });

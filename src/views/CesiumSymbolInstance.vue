@@ -16,12 +16,12 @@ export default defineComponent({
 
     const initMap = async () => {
       const cesiumSymbol = new CesiumSymbol(
-        "/symbol/shader/symbol3D.vert.glsl",
-        "/symbol/shader/symbol3D.frag.glsl",
-        "/symbol/texture/strip_z.png",
-        "/symbol/texture/palette_z.png",
-        "/symbol/json/tbvs_z.json",
-        "/symbol/json/output.geojson"
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol3D.vert.glsl`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol3D.frag.glsl`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/strip_z.png`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/palette_z.png`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/tbvs_z.json`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/output.geojson`
       );
       await cesiumSymbol.prepareData(64);
 
@@ -43,11 +43,11 @@ export default defineComponent({
 
 
       const dataSource = new Cesium.GeoJsonDataSource();
-      await dataSource.load("/symbol/json/crossroad_NJ.geojson");
+      await dataSource.load(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/crossroad_NJ.geojson`);
       view.dataSources.add(dataSource);
       dataSource.entities.values.forEach(function (entity) {
         entity.billboard = new Cesium.BillboardGraphics({
-          image: "/symbol/texture/交叉路口.png", // 图标的路径
+          image: `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/交叉路口.png`, // 图标的路径
           width: 32, // 图标的宽度
           height: 32, // 图标的高度
         });

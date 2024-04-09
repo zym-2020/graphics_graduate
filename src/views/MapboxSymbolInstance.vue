@@ -15,11 +15,11 @@ export default defineComponent({
     const symbolHandle = new SymbolHandle(64, 40);
 
     const initResource = async () => {
-      await symbolHandle.getShader("/symbol/shader/symbol.vert.glsl", "vertex");
-      await symbolHandle.getShader("/symbol/shader/symbol.frag.glsl", "fragment");
-      await symbolHandle.getTexture("/symbol/texture/strip_z.png", "strip");
-      await symbolHandle.getTexture("/symbol/texture/palette_z.png", "palette");
-      await symbolHandle.getData("/symbol/json/output.geojson", "/symbol/json/tbvs_z.json");
+      await symbolHandle.getShader(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol.vert.glsl`, "vertex");
+      await symbolHandle.getShader(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol.frag.glsl`, "fragment");
+      await symbolHandle.getTexture(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/strip_z.png`, "strip");
+      await symbolHandle.getTexture(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/palette_z.png`, "palette");
+      await symbolHandle.getData(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/output.geojson`, `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/tbvs_z.json`);
     };
 
     const initMap = () => {
@@ -68,8 +68,8 @@ export default defineComponent({
       map = new mapBoxGl.Map(mapOpt);
       map.on("load", async () => {
         map.addLayer(symbolHandle.generateCustomLayer("symbol", map));
-        const crossroad = await axios.get("/symbol/json/crossroad_NJ.geojson").then((res) => res.data);
-        map.loadImage("/symbol/texture/交叉路口.png", (err, image) => {
+        const crossroad = await axios.get(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/crossroad_NJ.geojson`).then((res) => res.data);
+        map.loadImage(`${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/交叉路口.png`, (err, image) => {
           map.addImage("crossroad", image!);
           map.addSource("pointCrossroad", {
             type: "geojson",

@@ -26,19 +26,19 @@ export default defineComponent({
     });
 
     const customLayer = new CustomLayer(
-      "/symbol/shader/symbol-ol.vert.glsl",
-      "/symbol/shader/symbol-ol.frag.glsl",
-      "/symbol/texture/strip_z.png",
-      "/symbol/texture/palette_z.png",
-      "/symbol/json/tbvs_z.json",
-      "/symbol/json/output.geojson",
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol-ol.vert.glsl`,
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol-ol.frag.glsl`,
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/strip_z.png`,
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/palette_z.png`,
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/tbvs_z.json`,
+      `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/output.geojson`,
       40
     );
 
     const stylyFunction = () => {
       return new Style({
         image: new Icon({
-          src: "/symbol/texture/交叉路口.png", // 图标的路径
+          src: `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/交叉路口.png`, // 图标的路径
           scale: 0.3, // 图标的缩放比例
           anchor: [0.5, 0.5], // 图标的锚点位置（相对于图标的宽度和高度）
         }),
@@ -46,7 +46,7 @@ export default defineComponent({
     };
 
     const geojsonSource = new Vector({
-      url: "/symbol/json/crossroad_NJ.geojson", // GeoJSON文件的路径
+      url: `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/crossroad_NJ.geojson`, // GeoJSON文件的路径
       format: new GeoJSON(),
     });
 

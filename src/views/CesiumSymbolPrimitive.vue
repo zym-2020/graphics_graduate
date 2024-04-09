@@ -18,12 +18,12 @@ export default defineComponent({
       const data = await initResource(
         "campfire",
         64,
-        "/symbol/json/crossroad_NJ.geojson",
-        "/symbol/json/tbvs.json",
-        "/symbol/shader/symbol3D-primitive.vert.glsl",
-        "/symbol/shader/symbol3D-primitive.frag.glsl",
-        "/symbol/texture/strip.png",
-        "/symbol/texture/palette.png"
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/crossroad_NJ.geojson`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/json/tbvs.json`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol3D-primitive.vert.glsl`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/shader/symbol3D-primitive.frag.glsl`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/strip.png`,
+        `${process.env.VUE_APP_RESOURCE_PREFIX}/symbol/texture/palette.png`
       );
       const view = new Viewer(container.value!, {
         msaaSamples: 2,
