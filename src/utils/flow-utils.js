@@ -772,9 +772,9 @@ export class FlowMapbox {
     gl.enable(gl.RASTERIZER_DISCARD);
     gl.beginTransformFeedback(gl.POINTS);
 
-    console.time()
+    // console.time()
     gl.drawArrays(gl.POINTS, 0, this._tracksNumber);
-    console.timeEnd()
+    // console.timeEnd()
     gl.endTransformFeedback();
     gl.disable(gl.RASTERIZER_DISCARD);
     gl.bindVertexArray(null);

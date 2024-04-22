@@ -2,13 +2,45 @@
   <div class="layout-header">
     <el-row>
       <el-col :span="7">
-        <div class="title">
-          
+        <div class="image">
+          <img src="/nnu.png" alt="" />
         </div>
       </el-col>
       <el-col :span="3"><div class="item" @click="nav('/')">首页</div></el-col>
-      <el-col :span="3"><div class="item" @click="nav('/mapboxSymbolInstance')">点符号渲染</div></el-col>
-      <el-col :span="3"><div class="item" @click="nav('/mapboxFlowInstance')">流场渲染</div></el-col>
+      <el-col :span="3"
+        ><el-dropdown @command="commandHandle">
+          <div class="item">
+            点符号渲染
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="/mapboxSymbolInstance">Mapbox平台</el-dropdown-item>
+              <el-dropdown-item command="/olSymbolInstance">Openlayers平台</el-dropdown-item>
+              <el-dropdown-item command="/cesiumSymbolInstance">Cesium平台</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown></el-col
+      >
+      <el-col :span="3">
+        <el-dropdown @command="commandHandle">
+          <div class="item">
+            流场渲染
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="/mapboxFlowInstance">Mapbox平台</el-dropdown-item>
+              <el-dropdown-item command="/olFlowInstance">Openlayers平台</el-dropdown-item>
+              <el-dropdown-item command="/cesiumFlowInstance">Cesium平台</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -22,7 +54,11 @@ export default defineComponent({
       router.push({ path: path });
     };
 
-    return { nav };
+    const commandHandle = (command: string) => {
+      router.push({ path: command });
+    };
+
+    return { nav, commandHandle };
   },
 });
 </script>
@@ -31,19 +67,33 @@ export default defineComponent({
 .layout-header {
   height: 100%;
   background: black;
-  color: white;
+  .image {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+  }
+  .el-dropdown {
+    width: 100%;
+  }
+  .el-tooltip__trigger {
+    outline: none;
+  }
   .el-row {
     height: 100%;
     .title {
       height: 100%;
-
     }
     .item {
       height: 100%;
-      text-align: center;
+      width: 100%;
       line-height: 5rem;
       font-size: 1.5rem;
       cursor: pointer;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

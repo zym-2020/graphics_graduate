@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkgraduate"]=self["webpackChunkgraduate"]||[]).push([[565],{2565:function(e,n,a){a.r(n),a.d(n,{default:function(){return o}});var r=a(3396);const t={class:"home"};function u(e,n,a,u,c,s){return(0,r.wg)(),(0,r.iD)("div",t,"首页")}var c=(0,r.aZ)({name:"HomeView"}),s=a(89);const i=(0,s.Z)(c,[["render",u]]);var o=i}}]);
-//# sourceMappingURL=565.b346e06a.js.map

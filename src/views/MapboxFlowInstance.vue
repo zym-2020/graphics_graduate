@@ -109,7 +109,7 @@ export default defineComponent({
           `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_122.png`,
           `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_123.png`,
           `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_124.png`,
-          `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_125.png`, 
+          `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_125.png`,
           `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/uv_126.png`,
         ],
         projection: `${process.env.VUE_APP_RESOURCE_PREFIX}/flow/texture/projection_mapbox.png`,
@@ -120,6 +120,55 @@ export default defineComponent({
         },
       })
     );
+
+    // const wind = ref<FlowMapbox>(
+    //   new FlowMapbox({
+    //     seeding: ["/flow/texture/mask_0.png", "/flow/texture/mask_0.png"],
+    //     constraints: {
+    //       minSpeedFactor: 0.5,
+    //       minTrajectoryNum: 4096,
+    //       minSegmentNum: 3,
+    //       minFillWidth: 1,
+    //       minAAWidth: 1,
+    //       minFixedDropRate: 0.001,
+    //       minExtraDropRate: 0.001,
+    //       maxSpeedFactor: 10,
+    //       maxTrajectoryNum: 262144,
+    //       maxSegmentNum: 16,
+    //       maxFillWidth: 25,
+    //       maxAAWidth: 5,
+    //       maxFixedDropRate: 0.1,
+    //       maxExtraDropRate: 0.2,
+
+    //       maxTextureSize: 4096,
+    //     },
+    //     parameter: {
+    //       speedFactor: 2,
+    //       tracksNumber: 206384,
+    //       segmentNumber: 16,
+    //       fillWidth: 1,
+    //       aaWidth: 2,
+    //       color: 0,
+    //       primitive: 0,
+    //       fixedDropRate: 0.003,
+    //       extraDropRate: 0.002,
+    //     },
+    //     extent: [0.8374743838415425, 0.42819046408647427, 0.8374960543212129, 0.42815421254642927],
+    //     flowBoundary: {
+    //       uMax: 2.04285,
+    //       uMin: -2.46302,
+    //       vMax: 0.776148,
+    //       vMin: -3.39616,
+    //     },
+    //     flowFields: ["/flow/texture/uv_0.png", "/flow/texture/uv_0.png"],
+    //     projection: "/flow/texture/projection_mapbox_0.png",
+    //     textureSize: {
+    //       seeding: [1024, 1551],
+    //       flowField: [1024, 1551],
+    //       projection: [1024, 2048],
+    //     },
+    //   })
+    // );
 
     const initMap = (layer: { id: string; type: "custom"; onAdd(map: any, gl: any): void; render(gl: any, matrix: any): void }) => {
       const mapOpt: MapboxOptions & { useWebGL2: boolean } = {
