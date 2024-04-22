@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="7">
         <div class="image">
-          <img src="/nnu.png" alt="" />
+          <img :src="imgSrc" alt="" />
         </div>
       </el-col>
       <el-col :span="3"><div class="item" @click="nav('/')">首页</div></el-col>
@@ -50,6 +50,7 @@ import { defineComponent } from "vue";
 import router from "@/router";
 export default defineComponent({
   setup() {
+    const imgSrc = `${process.env.VUE_APP_RESOURCE_PREFIX}/nnu.png`;
     const nav = (path: string) => {
       router.push({ path: path });
     };
@@ -58,7 +59,7 @@ export default defineComponent({
       router.push({ path: command });
     };
 
-    return { nav, commandHandle };
+    return { imgSrc, nav, commandHandle };
   },
 });
 </script>

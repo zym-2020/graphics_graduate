@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <video loop autoplay muted class="video-class">
-      <source src="/video/nnu.mp4" />
+      <source :src="videoSrc" />
     </video>
-    <img src="/nnu-1.png" alt="">
+    <img :src="imgSrc" />
   </div>
 </template>
 
@@ -12,6 +12,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HomeView",
+  setup() {
+    const imgSrc = `${process.env.VUE_APP_RESOURCE_PREFIX}/nnu-1.png`;
+    const videoSrc = `${process.env.VUE_APP_RESOURCE_PREFIX}/video/nnu.mp4`;
+
+    return { imgSrc, videoSrc };
+  },
 });
 </script>
 
