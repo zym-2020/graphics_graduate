@@ -17,6 +17,7 @@ export default defineComponent({
     return { zhCn };
   },
 });
+
 </script>
 
 <style lang="scss">
